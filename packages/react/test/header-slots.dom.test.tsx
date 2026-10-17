@@ -38,6 +38,23 @@ describe("tab customization", () => {
     host.remove();
     vi.unstubAllGlobals();
   });
+  it("ships scroll fades by default and updates the option without remounting content", async () => {
+    const render = (scrollFade?: boolean | { size: number }) => <Workspace scrollFade={scrollFade}>
+      <ViewType id="notes" title="Notes"><textarea defaultValue="Keep this draft" /></ViewType>
+      <View id="notes" type="notes" />
+    </Workspace>;
+    await act(async () => root.render(render()));
+    const content = host.querySelector('[data-open-panel-part="content"]')!;
+    const input = content.querySelector("textarea");
+    expect(content.hasAttribute("data-scroll-fade")).toBe(true);
+    expect(host.querySelector(".open-panel")?.getAttribute("data-tab-fill")).toBe("active");
+    await act(async () => root.render(render(false)));
+    expect(content.hasAttribute("data-scroll-fade")).toBe(false);
+    expect(content.querySelector("textarea")).toBe(input);
+    await act(async () => root.render(render({ size: 60 })));
+    expect(content.hasAttribute("data-scroll-fade")).toBe(true);
+    expect(content.querySelector("textarea")).toBe(input);
+  });
   it("keeps header replacements and icons with their selected views", async () => {
     let ws: WorkspaceHandle | null = null;
     await act(async () =>

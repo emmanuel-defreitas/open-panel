@@ -1,14 +1,6 @@
-import { useScrollFade } from "./useScrollFade";
-
 export function Article() {
-  const contentRef = useScrollFade();
   return (
-    <article
-      ref={contentRef}
-      className="sample-article"
-      aria-label="A slower way through the woods"
-      tabIndex={0}
-    >
+    <article className="sample-article" aria-label="A slower way through the woods" tabIndex={0}>
       <header>
         <p className="article-kicker">Field notes · Issue 01</p>
         <h1>A slower way through the woods</h1>

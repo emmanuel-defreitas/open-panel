@@ -1,6 +1,6 @@
 # open-panel-react
 
-React components and hooks for Open-Panel. Requires React 18.3+ and `open-panel`.
+React components and hooks for Open-Panel. Requires React 18.3+ and `open-panel-core`.
 
 Install it with the core package:
 
@@ -61,13 +61,13 @@ crowded headers and small panels:
 ```tsx
 function HeaderAction() {
   const isCompact = useIsCompact();
-  return isCompact ? null : <MyOverflowMenu />;
+  return <MyOverflowMenu compact={isCompact} />;
 }
 ```
 
 The hook updates when the panel resizes or its tabs change. `ViewType` also accepts
 `fullWidth={true}` to make that tab fill available row space independently of the
-workspace's automatic fill mode. In the demo, compact headers show only the
+workspace's automatic fill mode. Compact headers show only the
 selected tab at full width; arrow keys still select the other tabs.
 
 For UI outside the panel content, wrap the workspace and its toolbar/sidebar in
@@ -118,3 +118,29 @@ Use the inherited content token to give your article an initial top inset:
 The inset scrolls away with the content; the header stays in place. The existing
 per-type `tabbar="overlay"` behavior remains available for custom single-view
 headers independently of this workspace option.
+
+## Shared defaults and optional integrations
+
+The core stylesheet now includes the playground's transparent gutters, borderless
+panels, top highlights, subtle shadows, animated divider handles, and compact
+headers. Scroll fades are enabled automatically (40px); use `scrollFade={false}`
+or `scrollFade={{ size: 56 }}` on `Workspace`. Tab fill defaults to `"active"`.
+Header mode remains `"separate"`; opt into `"overlay"` as shown above.
+
+`PanelTabsMenu` is exported from `open-panel-react`. Use
+`headerAction={<PanelTabsMenu />}` for a picker that stays visible when compact.
+
+Optional entries keep third-party effects out of the base React bundle:
+
+```tsx
+import { GlassTabBackground } from "open-panel-react/glass"; // install @samasante/liquid-glass
+import { useInteractionSounds } from "open-panel-react/sounds"; // install cuelume
+```
+
+`GlassTabBackground` accepts `theme` plus Glass props and goes in `tabBackground`.
+`useInteractionSounds(workspace, { volume: 0.22, storageKey: "app:sounds" })`
+returns `{ enabled, toggleSound }`. Its `defaultEnabled` option defaults to true.
+Mount one sound controller per app because Cuelume's volume/enabled settings are
+global. The sound hook removes its listeners and observers on unmount.
+
+See the [complete guide and previews](https://github.com/emmanuel-defreitas/open-panel#readme).

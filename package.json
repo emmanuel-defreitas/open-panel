@@ -22,9 +22,9 @@
     }
   },
   "scripts": {
-    "build": "bun run --filter './packages/*' build",
+    "build": "bun run --cwd packages/core build && bun run --cwd packages/react build && bun run --cwd packages/element build",
     "dev": "bun run --filter open-panel-demo dev",
-    "typecheck": "tsc --noEmit && bun run --filter './packages/*' --filter './demo/*' typecheck",
+    "typecheck": "tsc --noEmit && bun run --filter './packages/*' --filter open-panel-demo typecheck",
     "test": "vitest run",
     "format": "prettier --write . --ignore-path .gitignore --ignore-path .prettierignore --ignore-path .git/info/exclude",
     "format:check": "prettier --check . --ignore-path .gitignore --ignore-path .prettierignore --ignore-path .git/info/exclude",

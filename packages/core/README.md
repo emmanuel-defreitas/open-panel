@@ -1,4 +1,4 @@
-# open-panel
+# open-panel-core
 
 The framework-agnostic core of Open-Panel: dockable, zoomable workspaces for web tools.
 
@@ -38,3 +38,25 @@ smaller panels.
 If the two sides of a divider cannot fit their combined minimums, resizing uses
 proportional compact limits instead of locking the divider at the midpoint. The
 configured minimums apply again once enough space is available.
+
+## Shared presentation defaults
+
+Import `open-panel-core/style.css` once. It includes transparent workspace/stage
+backgrounds, borderless panels (neutral-50 in light mode), top highlights, subtle
+resting shadows, drag shadows, and divider handles visible on hover/focus/resize.
+The header is 48px high; interactive resize minimums are 232 × 310px. Override
+these through `tokens` or CSS custom properties.
+
+`tabs.fill` defaults to `"active"`; compact headers show only the selected tab.
+`headerMode` defaults to `"separate"`. Set `"overlay"` to scroll beneath the header.
+Use `--open-panel-titlebar-height` as initial content padding in overlay mode.
+
+`scrollFade` defaults to true with 40px edges. Pass false to disable it or
+`{ size: 56 }` to change its length. Fades update on scrolling, resizing, child
+changes, and image loads. They disappear at reached edges and for short content.
+`attachScrollFade(element, options)` exports the same observer lifecycle for a
+custom scroller and returns a cleanup function. The shared mask styling targets
+`[data-open-panel-part="content"][data-scroll-fade]` inside `.open-panel`.
+
+Optional React glass/sound components are adapter features, not core dependencies.
+See the [full guide](https://github.com/emmanuel-defreitas/open-panel#readme).

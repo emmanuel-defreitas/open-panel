@@ -204,7 +204,9 @@ export interface OpenOptions {
 }
 
 export interface WorkspaceOptions {
-    /** Separate reserves header space; overlay lets content scroll beneath the visible header. */
+    /** Enabled by default with 40px edges. Set false to disable. */
+    scrollFade?: boolean | import("./scroll-fade").ScrollFadeOptions;
+    /** Separate (default) reserves header space; overlay lets content scroll beneath it. */
     headerMode?: "separate" | "overlay";
     types: ViewTypes;
     /** Where floating panels live. Default "overlay". */
@@ -224,7 +226,7 @@ export interface WorkspaceOptions {
     persist?: { key: string; version?: string | number };
     /** Tab layout. `fill: true` shares the row; `fill: "active"` expands the selected tab when intrinsic tabs come within 12px of filling the row.
      * `inset`: space in px between the tabs and
-     * the bar's top and sides; 0 makes them meet the edges. Defaults: `{ fill: false, inset: 4 }`.
+     * the bar's top and sides; 0 makes them meet the edges. Defaults: `{ fill: "active", inset: 4 }`.
      * Also available as the `--open-panel-tab-inset` token. */
     tabs?: { fill?: boolean | "active"; inset?: number };
     /** The panel menu. `true` (default) adds the built-in items after each view type's `menu` items;

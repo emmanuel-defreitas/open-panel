@@ -58,8 +58,10 @@
       "name": "open-panel-react",
       "version": "0.1.0",
       "devDependencies": {
+        "@samasante/liquid-glass": "^0.1.1",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
+        "cuelume": "^0.2.8",
         "open-panel-core": "workspace:*",
         "react": "catalog:",
         "react-dom": "catalog:",
@@ -68,10 +70,16 @@
         "vitest": "catalog:",
       },
       "peerDependencies": {
+        "@samasante/liquid-glass": "^0.1.1",
+        "cuelume": "^0.2.8",
         "open-panel-core": "^0.1.0",
         "react": ">=18.3",
         "react-dom": ">=18.3",
       },
+      "optionalPeers": [
+        "@samasante/liquid-glass",
+        "cuelume",
+      ],
     },
   },
   "catalog": {
