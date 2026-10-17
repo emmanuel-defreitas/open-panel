@@ -21,20 +21,21 @@ function TabGlass() {
   const { selected } = useView();
   return (
     <Glass
-      // className="tab-glass"
+      //  className="tab-glass"
       aria-hidden="true"
-      radius={8}
-
-      //       optics={{
-      //         frost: selected ? 0.5 : 0,
-      //         brightness: selected ? 0.1 : 0,
-      //
-      //         strength: 0.8,
-      //         dispersion: 0.8,
-      //         sheen: 0.5,
-      //       }}
-      //   style={{ width: "100%", height: "100%" }}
-    />
+      radius={10}
+      optics={{
+        frost: selected ? 10 : 0,
+        brightness: selected ? 0.05 : 0,
+        strength: 0.6,
+        dispersion: 0.4,
+        sheen: 0.9,
+      }}
+      style={{ width: "100%", height: "100%" }}
+    >
+      {/* A child enables the package's backdrop material mode. */}
+      <span className="tab-glass-fill" />
+    </Glass>
   );
 }
 
