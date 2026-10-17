@@ -31,6 +31,7 @@ import {
     type LayoutSpec,
     type MenuEntry,
     type MenuRequest,
+    type TabContextMenuEvent,
     type PanelMenuContext,
     type Params,
     type Placement,
@@ -404,6 +405,8 @@ export interface WorkspaceProps {
     panelMenu?: boolean | ((entries: MenuEntry[], context: PanelMenuContext) => MenuEntry[]);
     /** Show panel menus with your own component. Always calls the latest function. */
     renderMenu?(request: MenuRequest): void;
+    /** Return false to hand tab gestures to an ancestor context-menu trigger. */
+    onTabContextMenu?(request: TabContextMenuEvent): boolean | void;
     /** Tab layout: `fill: true` shares the row; `fill: "active"` expands the selected tab when intrinsic tabs come within 12px of filling the row. */
     tabs?: { fill?: boolean | "active"; inset?: number };
     /** Where the built-in "Hide" animates to, e.g. your dock or tray button. */
@@ -497,6 +500,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
                   return typeof current === "function" ? current(entries, context) : entries;
               }
             : value;
+    const tabContextMenuOption = (request: TabContextMenuEvent) => latest.current.props.onTabContextMenu?.(request);
     const renderMenuOption = (request: MenuRequest) => latest.current.props.renderMenu?.(request);
     const buildTypes = () => {
         const out: Record<string, ViewTypeDefinition> = {};
@@ -518,6 +522,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
             keymap: p.keymap,
             panelMenu: panelMenuOption(p.panelMenu),
             renderMenu: p.renderMenu ? renderMenuOption : undefined,
+            onTabContextMenu: p.onTabContextMenu ? tabContextMenuOption : undefined,
             tabs: p.tabs,
             label: p.label,
             document: p.document,
@@ -572,6 +577,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
             keymap: props.keymap,
             panelMenu: panelMenuOption(props.panelMenu),
             renderMenu: props.renderMenu ? renderMenuOption : undefined,
+            onTabContextMenu: props.onTabContextMenu ? tabContextMenuOption : undefined,
             label: props.label,
             tabs: props.tabs,
         });
@@ -588,6 +594,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
         keymapKey,
         typeof props.panelMenu === "function" ? "function" : props.panelMenu,
         !!props.renderMenu,
+        !!props.onTabContextMenu,
         props.label,
         props.tabs?.fill,
         props.tabs?.inset,

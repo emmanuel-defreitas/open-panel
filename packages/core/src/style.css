@@ -1158,7 +1158,9 @@
 ) {
   display: none;
 }
-:where(.open-panel [data-open-panel-part="panel"])::after {
+:where(.open-panel [data-open-panel-part="panel"])::after,
+:where(.open-panel [data-open-panel-part="tabbar"][data-overlay])::after,
+:where(.open-panel [data-open-panel-part="surface"][data-tabbar="hidden"])::after {
   content: "";
   position: absolute;
   top: 0;
@@ -1176,9 +1178,16 @@
   );
   box-shadow: 0 1px 3px rgb(255 255 255 / 5%);
 }
-:where(.open-panel:is([data-theme="light"], [data-theme="system"]) [data-open-panel-part="panel"])::after {
+:where(
+  .open-panel:is([data-theme="light"], [data-theme="system"])
+    :is(
+      [data-open-panel-part="panel"],
+      [data-open-panel-part="tabbar"][data-overlay],
+      [data-open-panel-part="surface"][data-tabbar="hidden"]
+    )
+)::after {
   height: 4.5px;
-  background: #fff;
+  background: #ffffff07;
   border-radius: 0 0 3px 3px;
 }
 :where(.open-panel:is([data-theme="light"], [data-theme="system"])) {
@@ -1324,12 +1333,19 @@
   :where(.open-panel[data-theme="system"]) {
     --open-panel-panel: #1a1b1f;
   }
-  :where(.open-panel[data-theme="system"] [data-open-panel-part="panel"])::after {
+  :where(
+    .open-panel[data-theme="system"]
+      :is(
+        [data-open-panel-part="panel"],
+        [data-open-panel-part="tabbar"][data-overlay],
+        [data-open-panel-part="surface"][data-tabbar="hidden"]
+      )
+  )::after {
     height: 2.5px;
     background: linear-gradient(
       90deg,
       transparent,
-      rgb(255 255 255 / 38%) 28%,
+      rgb(255 255 255 / 18%) 28%,
       rgb(255 255 255 / 12%) 68%,
       transparent
     );
@@ -1346,4 +1362,101 @@
   :where(.open-panel [data-open-panel-part="tab"][data-selected]) {
     outline: 1px solid Highlight;
   }
+}
+
+/* Native scrollbars: quiet theme-aware thumbs, with no contrasting track. */
+:where(.open-panel) {
+  --open-panel-scrollbar-thumb: color-mix(in srgb, var(--open-panel-text-muted) 28%, transparent);
+  --open-panel-scrollbar-thumb-hover: color-mix(in srgb, var(--open-panel-text-muted) 48%, transparent);
+}
+:where(.open-panel[data-theme="light"]) {
+  color-scheme: light;
+}
+:where(.open-panel:is([data-theme="dark"], [data-theme="darker"], [data-theme="medium"])) {
+  color-scheme: dark;
+}
+:where(.open-panel[data-theme="system"]) {
+  color-scheme: light dark;
+}
+:where(.open-panel [data-open-panel-part="content"]) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--open-panel-scrollbar-thumb) transparent;
+}
+:where(.open-panel [data-open-panel-part="content"]:is(:hover, :focus-within)) {
+  scrollbar-color: var(--open-panel-scrollbar-thumb-hover) transparent;
+}
+/* Fallback for engines that do not implement the standard scrollbar properties. */
+@supports not (scrollbar-color: auto) {
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar-track,
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar-thumb {
+    background: var(--open-panel-scrollbar-thumb);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+  }
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar-thumb:hover {
+    background-color: var(--open-panel-scrollbar-thumb-hover);
+  }
+}
+@media (forced-colors: active) {
+  :where(.open-panel [data-open-panel-part="content"]) {
+    scrollbar-color: auto;
+  }
+}
+
+/* Quiet inactive pills remain legible over both plain panels and scrolled imagery. */
+:where(.open-panel [data-open-panel-part="tab"]:not([data-selected])) {
+  background: color-mix(in srgb, var(--open-panel-text) 5%, transparent);
+  box-shadow: inset 0 1.5px 0 color-mix(in srgb, var(--open-panel-text) 10%, transparent);
+}
+:where(.open-panel [data-open-panel-part="tab"]:not([data-selected]):hover) {
+  background: color-mix(in srgb, var(--open-panel-text) 9%, transparent);
+}
+/* A restrained material edge keeps light glass visible even over a blank panel. */
+:where(.open-panel) {
+  --open-panel-glass-tint: transparent;
+  --open-panel-glass-edge: none;
+  --open-panel-glass-reflection-opacity: 0;
+}
+:where(.open-panel:is([data-theme="light"], [data-theme="system"])) {
+  --open-panel-glass-reflection-opacity: 1;
+  --open-panel-glass-tint: linear-gradient(135deg, rgb(255 255 255 / 5%), rgb(210 216 228 / 0%));
+  --open-panel-glass-edge:
+    inset 0 1px 0 rgb(255 255 255 / 95%), inset 0 0 0 1px rgb(30 35 45 / 3%), 0 2px 9px rgb(30 35 45 / 7%);
+}
+@media (prefers-color-scheme: dark) {
+  :where(.open-panel[data-theme="system"]) {
+    --open-panel-glass-tint: transparent;
+    --open-panel-glass-edge: none;
+    --open-panel-glass-reflection-opacity: 0;
+  }
+}
+:where(.open-panel [data-open-panel-part="tab"][data-selected] [data-open-panel-part="tab-background"]) {
+  border-radius: 10px;
+  background: var(--open-panel-glass-tint);
+  box-shadow: var(--open-panel-glass-edge);
+}
+
+/* Keep the light reflection above the glass renderer rather than beneath it. */
+:where(
+  .open-panel [data-open-panel-part="tab"][data-selected] [data-open-panel-part="tab-background"]
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: var(--open-panel-glass-reflection-opacity);
+  border: 1px solid rgb(35 42 54 / 15%);
+  border-top-color: rgb(35 42 54 / 10%);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 95%), rgb(255 255 255 / 35%) 2px, transparent 5px);
+  box-shadow: inset 0 2px 0 #fff;
 }

@@ -49,6 +49,15 @@ export interface PanelMenuContext {
     region: "stage" | "side" | "floating";
 }
 
+/** A tab context-menu gesture, before the built-in panel menu opens. */
+export interface TabContextMenuEvent {
+    /** Original bubbling mouse event; keyboard menu gestures synthesize this event at the tab. */
+    event: MouseEvent;
+    view: ViewHandle;
+    panelId: string;
+    tab: HTMLElement;
+}
+
 /** A menu for `renderMenu` to show in place of the built-in one. */
 export interface MenuRequest {
     /** The final entries, with leading, trailing and repeated separators removed. */
@@ -236,6 +245,9 @@ export interface WorkspaceOptions {
     panelMenu?: boolean | ((entries: MenuEntry[], context: PanelMenuContext) => MenuEntry[]);
     /** Show panel menus with your own component instead of the built-in one. */
     renderMenu?(request: MenuRequest): void;
+    /** Return false to hand off to an ancestor context-menu trigger without cancelling bubbling.
+     * Call event.preventDefault() to suppress both the browser and built-in menus instead. */
+    onTabContextMenu?(request: TabContextMenuEvent): boolean | void;
     /** Where the built-in "Hide" animates to, e.g. your dock or tray button. */
     hideToward?(panelId: string): Element | Rect | null | undefined;
     /** Unknown view types in a restored document. Default "placeholder". */

@@ -598,10 +598,16 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
         });
         lifetime.listen(tabbar, "contextmenu", (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            if (target.closest("[data-open-panel-part=accessory]")) return;
-            e.preventDefault();
+            if (e.defaultPrevented || target.closest("[data-open-panel-part=accessory]")) return;
             const tab = target.closest<HTMLElement>("[data-open-panel-part=tab]");
-            if (tab) selectAndFocus(tab.dataset.view!);
+            if (tab) {
+                const viewId = tab.dataset.view!;
+                selectAndFocus(viewId);
+                const view = records.get(viewId)?.controller;
+                if (view && options.onTabContextMenu?.({ event: e, view, panelId: d.id, tab }) === false) return;
+                if (e.defaultPrevented) return;
+            }
+            e.preventDefault();
             const b = root.getBoundingClientRect();
             openPanelMenu(d.id, null, { x: e.clientX - b.left, y: e.clientY - b.top });
         });
@@ -1962,7 +1968,16 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
             case "F10":
                 if (e.key === "F10" && !e.shiftKey) return;
                 e.preventDefault();
-                openPanelMenu(panelId, panelDoms.get(panelId)!.menuButton);
+                // Route keyboard gestures through the same bubbling event as right-click,
+                // so custom React context-menu triggers receive both input methods.
+                const tab = panelDoms.get(panelId)?.tabs.get(panel.selected)?.el;
+                if (tab) {
+                    const rect = tab.getBoundingClientRect();
+                    tab.dispatchEvent(new MouseEvent("contextmenu", {
+                        bubbles: true, cancelable: true, button: 2,
+                        clientX: rect.left + rect.width / 2, clientY: rect.bottom,
+                    }));
+                }
                 return;
         }
     }
