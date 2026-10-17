@@ -1,3 +1,4 @@
+import { attachScrollFade } from "./scroll-fade";
 import { createDocument, type LayoutSpec } from "../model/builder";
 import {
     clampFloat,
@@ -90,6 +91,7 @@ interface SurfaceRecord {
     icon: HTMLElement;
     accessory: HTMLElement;
     cleanup: (() => void) | null;
+    fadeCleanup: (() => void) | null;
     mountedWith: ViewTypeDefinition | null;
     mountKey: unknown;
     iconHtml: string | null;
@@ -273,7 +275,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
     let appliedTokens = new Set<string>();
     function applyTheme() {
         setAttr(root, "data-theme", options.theme ?? "system");
-        const tabs = options.tabs ?? {};
+        const tabs = { fill: "active" as const, ...options.tabs };
         setAttr(root, "data-tab-fill", tabs.fill ? (tabs.fill === "active" ? "active" : "") : null);
         setAttr(root, "data-tab-bleed", tabs.inset === 0 ? "" : null);
         if (tabs.inset !== undefined) root.style.setProperty("--open-panel-tab-inset", `${tabs.inset}px`);
@@ -428,6 +430,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
             icon,
             accessory,
             cleanup: null,
+            fadeCleanup: options.scrollFade === false ? null : attachScrollFade(content, typeof options.scrollFade === "object" ? options.scrollFade : {}),
             mountedWith: null,
             mountKey: null,
             iconHtml: null,
@@ -504,6 +507,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
         } catch (error) {
             console.error(error);
         }
+        record.fadeCleanup?.();
         record.shell.remove();
         record.icon.remove();
         record.accessory.remove();
@@ -2485,8 +2489,15 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
         update(patch) {
             const typesChanged = patch.types && patch.types !== options.types;
             options = { ...options, ...patch };
+            if ("scrollFade" in patch) {
+                for (const record of records.values()) {
+                    record.fadeCleanup?.();
+                    record.fadeCleanup = options.scrollFade === false ? null : attachScrollFade(record.content, typeof options.scrollFade === "object" ? options.scrollFade : {});
+                }
+            }
             if (
                 "theme" in patch ||
+                "headerMode" in patch ||
                 "tokens" in patch ||
                 "navigation" in patch ||
                 "label" in patch ||

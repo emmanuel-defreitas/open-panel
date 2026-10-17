@@ -1,29 +1,38 @@
 import { useEffect, useState } from "react";
 import { bind, play, setEnabled, setVolume, unlock, type SoundName } from "cuelume";
-import type { WorkspaceHandle } from "open-panel-react";
+import type { WorkspaceHandle } from "open-panel-core";
 
-const SOUND_KEY = "open-panel-playground:sound";
+export interface InteractionSoundsOptions {
+  storageKey?: string;
+  volume?: number;
+  defaultEnabled?: boolean;
+}
 
-export function useInteractionSounds(ws: WorkspaceHandle | null) {
+export function useInteractionSounds(
+  ws: WorkspaceHandle | null,
+  { storageKey, volume = 0.22, defaultEnabled = true }: InteractionSoundsOptions = {},
+) {
   const [enabled, setSound] = useState(() => {
     try {
-      return localStorage.getItem(SOUND_KEY) !== "off";
+      return storageKey
+        ? (localStorage.getItem(storageKey) ?? (defaultEnabled ? "on" : "off")) !== "off"
+        : defaultEnabled;
     } catch {
-      return true;
+      return defaultEnabled;
     }
   });
   useEffect(() => {
-    setVolume(0.22);
+    setVolume(volume);
     return bind();
-  }, []);
+  }, [volume]);
   useEffect(() => {
     setEnabled(enabled);
     try {
-      localStorage.setItem(SOUND_KEY, enabled ? "on" : "off");
+      if (storageKey) localStorage.setItem(storageKey, enabled ? "on" : "off");
     } catch {
       /* Optional persistence. */
     }
-  }, [enabled]);
+  }, [enabled, storageKey]);
 
   useEffect(() => {
     if (!ws) return;

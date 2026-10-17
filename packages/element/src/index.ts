@@ -34,6 +34,7 @@ function typeFromTemplate(template: HTMLTemplateElement): [string, ViewTypeDefin
         gestures: d.gestures === "workspace" ? "workspace" : undefined,
         tabbar: d.tabbar === "auto" || d.tabbar === "never" || d.tabbar === "overlay" ? d.tabbar : undefined,
         className: d.class,
+        fullWidth: d.fullWidth === undefined ? undefined : d.fullWidth !== "false",
     };
     if (d.minWidth || d.minHeight)
         def.minSize = { width: Number(d.minWidth ?? 0), height: Number(d.minHeight ?? 0) };
@@ -122,6 +123,8 @@ const ElementBase = (typeof HTMLElement === "undefined" ? class {} : HTMLElement
 export class PanelWorkspaceElement extends ElementBase {
     static observedAttributes = [
         "theme",
+        "header-mode",
+        "scroll-fade",
         "floating",
         "navigation",
         "motion",
@@ -202,6 +205,8 @@ export class PanelWorkspaceElement extends ElementBase {
         const floating = this.attr("floating");
         const navigation = this.attr("navigation");
         return {
+            headerMode: this.attr<"separate" | "overlay">("header-mode"),
+            scrollFade: bool(this, "scroll-fade"),
             ...(this.hasAttribute("theme") ? { theme: this.attr("theme") } : {}),
             ...(floating !== undefined
                 ? { floating: floating === "false" ? false : (floating as "stage" | "overlay") }
@@ -214,7 +219,7 @@ export class PanelWorkspaceElement extends ElementBase {
             ...(this.hasAttribute("tab-fill") || this.hasAttribute("tab-inset")
                 ? {
                       tabs: {
-                          fill: bool(this, "tab-fill") ?? false,
+                          fill: this.getAttribute("tab-fill") === "active" ? "active" : bool(this, "tab-fill") ?? "active",
                           ...(this.hasAttribute("tab-inset")
                               ? { inset: Number(this.getAttribute("tab-inset")) }
                               : {}),

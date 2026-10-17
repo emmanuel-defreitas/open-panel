@@ -9,3 +9,6 @@ export { formatCombo, DEFAULT_KEYMAP } from "./runtime/keymap";
 export type { Command, Keymap } from "./runtime/keymap";
 export type * from "./model/types";
 export type * from "./runtime/types";
+
+export { attachScrollFade } from "./runtime/scroll-fade";
+export type { ScrollFadeOptions } from "./runtime/scroll-fade";

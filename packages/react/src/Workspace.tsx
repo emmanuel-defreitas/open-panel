@@ -388,7 +388,9 @@ function isMarkup(icon: ReactNode): icon is string {
 
 // ------------------------------------------------------------------ Workspace
 export interface WorkspaceProps {
-    /** Separate reserves header space; overlay lets content scroll beneath the visible header. */
+    /** Enabled by default with 40px edges. */
+    scrollFade?: boolean | import("open-panel-core").ScrollFadeOptions;
+    /** Separate by default; overlay lets content scroll beneath the visible header. */
     headerMode?: "separate" | "overlay";
     children?: ReactNode;
     floating?: false | FloatingLayer;
@@ -508,6 +510,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
             types: buildTypes(),
             floating: p.floating,
             headerMode: p.headerMode,
+            scrollFade: p.scrollFade,
             navigation: p.navigation,
             motion: p.motion,
             theme: p.theme,
@@ -561,6 +564,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
         ws.update({
             floating: props.floating,
             headerMode: props.headerMode,
+            scrollFade: props.scrollFade,
             navigation: props.navigation,
             motion: props.motion,
             theme: props.theme,
@@ -576,6 +580,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
         ws,
         props.floating,
         props.headerMode,
+        props.scrollFade,
         props.navigation,
         props.motion,
         props.theme,

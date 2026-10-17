@@ -1,60 +1,82 @@
 {
-    "name": "open-panel-react",
-    "version": "0.1.0",
-    "description": "React bindings for Open-Panel: dockable, zoomable workspaces for web tools.",
-    "type": "module",
-    "author": "Emmanuel De Freitas",
-    "homepage": "https://github.com/emmanuel-defreitas/open-panel",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/emmanuel-defreitas/open-panel.git",
-        "directory": "packages/react"
+  "name": "open-panel-react",
+  "version": "0.1.0",
+  "description": "React bindings for Open-Panel: dockable, zoomable workspaces for web tools.",
+  "type": "module",
+  "author": "Emmanuel De Freitas",
+  "homepage": "https://github.com/emmanuel-defreitas/open-panel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emmanuel-defreitas/open-panel.git",
+    "directory": "packages/react"
+  },
+  "keywords": [
+    "react",
+    "docking",
+    "layout",
+    "tabs",
+    "panels",
+    "workspace"
+  ],
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
-    "keywords": [
-        "react",
-        "docking",
-        "layout",
-        "tabs",
-        "panels",
-        "workspace"
-    ],
-    "sideEffects": false,
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "source": "./src/index.ts",
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
-        },
-        "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./glass": {
+      "source": "./src/glass.tsx",
+      "types": "./dist/glass.d.ts",
+      "import": "./dist/glass.js"
     },
-    "files": [
-        "dist",
-        "README.md"
-    ],
-    "peerDependencies": {
-        "open-panel-core": "^0.1.0",
-        "react": ">=18.3",
-        "react-dom": ">=18.3"
-    },
-    "scripts": {
-        "build": "tsup && cp ../../LICENSE*.md .",
-        "typecheck": "tsc --noEmit",
-        "prepack": "bun run build"
-    },
-    "devDependencies": {
-        "open-panel-core": "workspace:*",
-        "@types/react": "catalog:",
-        "@types/react-dom": "catalog:",
-        "react": "catalog:",
-        "react-dom": "catalog:",
-        "tsup": "catalog:",
-        "typescript": "catalog:",
-        "vitest": "catalog:"
-    },
-    "publishConfig": {
-        "access": "public"
+    "./sounds": {
+      "source": "./src/sounds.ts",
+      "types": "./dist/sounds.d.ts",
+      "import": "./dist/sounds.js"
     }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "open-panel-core": "^0.1.0",
+    "react": ">=18.3",
+    "react-dom": ">=18.3",
+    "@samasante/liquid-glass": "^0.1.1",
+    "cuelume": "^0.2.8"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "prepack": "bun run build"
+  },
+  "devDependencies": {
+    "open-panel-core": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "@samasante/liquid-glass": "^0.1.1",
+    "cuelume": "^0.2.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependenciesMeta": {
+    "@samasante/liquid-glass": {
+      "optional": true
+    },
+    "cuelume": {
+      "optional": true
+    }
+  }
 }

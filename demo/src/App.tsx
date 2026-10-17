@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Article } from "./Article";
-import { useInteractionSounds } from "./sounds";
-import { Glass } from "@samasante/liquid-glass";
+import { useInteractionSounds } from "open-panel-react/sounds";
+import { GlassTabBackground } from "open-panel-react/glass";
 import {
   Panel,
   Split,
@@ -11,77 +11,13 @@ import {
   Workspace,
   WorkspaceProvider,
   useOptionalWorkspace,
-  useView,
-  useWorkspace,
-  usePanelViews,
+  PanelTabsMenu,
   useFocusedView,
   useWorkspaceState,
   type Theme,
 } from "open-panel-react";
 
 const themes: Theme[] = ["light", "medium", "dark", "darker"];
-
-// The icon slot keeps the decorative background attached to its tab.
-function TabGlass({ theme }: { theme: Theme }) {
-  const { selected } = useView();
-  return (
-    <Glass
-      //  className="tab-glass"
-      aria-hidden="true"
-
-      muted
-
-      radius={10}
-      //   hidden={!selected}
-      optics={{
-        depth: 0.8,
-        bend: 0.4,
-        frost: selected ? 4 : 8,
-        brightness: selected ? (theme === "light" ? -0.02 : -0.3) : 0,
-        strength: 0.2,
-        dispersion: 0.2,
-        sheen: 0.1,
-
-        curvature: 0.2,
-        sheenAngle: 0.7,
-        softEdge: true,
-        specular: selected ? 1 : 0.1,
-        sheenWidth: 1,
-
-        glow: 0.1,
-        sheenDark: theme === "light",
-      }}
-
-      style={{ width: "100%", height: "100%" }}
-    >
-      {/* A child enables the package's backdrop material mode. */}
-      <span className="tab-glass-fill" />
-    </Glass>
-  );
-}
-
-function TabsAction() {
-  const ws = useWorkspace();
-  const tabs = usePanelViews();
-  return (
-    <select
-      className="tabs-action"
-      aria-label="Panel tabs"
-      value=""
-      onChange={(event) => ws.focus(event.target.value)}
-    >
-      <option value="" disabled>
-        Tabs ({tabs.length})
-      </option>
-      {tabs.map((tab) => (
-        <option key={tab.id} value={tab.id}>
-          {tab.title}
-          {tab.selected ? " ✓" : ""}
-        </option>
-      ))}
-    </select>
-  );
-}
 
 export function App() {
   return (
@@ -93,7 +29,7 @@ export function App() {
 
 function Demo() {
   const ws = useOptionalWorkspace();
-  const sound = useInteractionSounds(ws);
+  const sound = useInteractionSounds(ws, { storageKey: "open-panel-playground:sound" });
   const snapshot = useWorkspaceState();
   const [theme, setTheme] = useState<Theme>("dark");
   const [headerMode, setHeaderMode] = useState<"separate" | "overlay">("overlay");
@@ -169,7 +105,7 @@ function Demo() {
         </div>
       </header>
       <div className="demo-guide">
-        <span>Empty panels. Room to experiment.</span>
+        <span>Resize, rearrange, and scroll.</span>
         <span>Drag tabs to move or split · Drag dividers to resize · Double-click a tab bar to maximize</span>
       </div>
       <main className="demo-main">
@@ -186,8 +122,8 @@ function Demo() {
         >
           <ViewType<{ name: string }>
             id="blank"
-            tabBackground={<TabGlass theme={theme} />}
-            headerAction={<TabsAction />}
+            tabBackground={<GlassTabBackground theme={theme} />}
+            headerAction={<PanelTabsMenu />}
             title={(view) => view.params.name || "Panel"}
             placement="stage"
           >
