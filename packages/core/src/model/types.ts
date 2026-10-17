@@ -89,6 +89,8 @@ export interface ViewRules {
   /** At most one instance; `open()` focuses the existing one. */
   singleton?: boolean;
   closable?: boolean;
+  /** Fill the available tab row width. */
+  fullWidth?: boolean;
   /** Content lays out at no less than this size and scales down below it. */
   minSize?: { width: number; height: number };
   /** Tab bar: "always" (default) sits above the content; "auto" hides it while the view is alone

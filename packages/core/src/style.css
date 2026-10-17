@@ -912,3 +912,88 @@
     border: 1px solid CanvasText;
   }
 }
+
+/* React decoration and header replacement slots. */
+:where(.open-panel [data-open-panel-part="tab-icon"]:has([data-open-panel-part="tab-background"])) {
+  display: contents;
+}
+:where(.open-panel [data-open-panel-part="tab-background"]) {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+:where(.open-panel [data-open-panel-part="tab-prefix"]) {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  position: relative;
+  z-index: 1;
+}
+:where(.open-panel [data-open-panel-part="header-action"]) {
+  display: inline-flex;
+  align-items: center;
+}
+:where(
+  .open-panel
+    [data-open-panel-part="tabbar"]:has(
+      [data-open-panel-part="accessory"]:not([hidden]) [data-open-panel-part="header-action"]
+    )
+    > [data-open-panel-part="panel-menu"]
+) {
+  display: none;
+}
+:where(.open-panel[data-tab-fill="active"] [data-open-panel-part="tab"]) {
+  flex: 0 1 auto;
+  max-width: var(--open-panel-tab-max-width);
+}
+:where(
+  .open-panel[data-tab-fill="active"]
+    [data-open-panel-part="tabs"][data-crowded]
+    [data-open-panel-part="tab"][data-selected]
+) {
+  flex: 1 0 auto;
+  max-width: none;
+}
+
+:where(
+  .open-panel
+    [data-open-panel-part="tab"]:has([data-open-panel-part="tab-background"])
+    > :is(
+      [data-open-panel-part="tab-title"],
+      [data-open-panel-part="tab-close"],
+      [data-open-panel-part="tab-badge"]
+    )
+) {
+  position: relative;
+  z-index: 1;
+}
+
+:where(.open-panel [data-open-panel-part="tabs"][data-measuring-tabs] [data-open-panel-part="tab"]) {
+  flex: none;
+  width: max-content;
+  max-width: none;
+}
+
+:where(.open-panel [data-open-panel-part="tab"][data-full-width]) {
+  flex: 1 0 auto;
+  max-width: none;
+}
+/* Intrinsic measurement includes tabs hidden by the compact presentation. */
+:where(.open-panel [data-open-panel-part="tabs"][data-measuring-tabs] [data-open-panel-part="tab"]) {
+  display: flex !important;
+  flex: none !important;
+  width: max-content !important;
+  max-width: none !important;
+}
+
+/* Workspace overlay headers keep all tabs visible and retain their drag targets. */
+:where(
+  .open-panel[data-header-mode="overlay"]
+    [data-open-panel-part="tabbar"][data-overlay]
+    [data-open-panel-part="tab"]
+) {
+  opacity: 1;
+}

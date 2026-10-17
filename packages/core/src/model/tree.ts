@@ -233,8 +233,14 @@ export function resizeBoundary(
   const normalized = weights.map((w) => w / total);
   const start = sum(normalized.slice(0, index));
   const pair = normalized[index] + normalized[index + 1];
-  const lo = Math.min(min(index), pair / 2);
-  const hi = pair - Math.min(min(index + 1), pair / 2);
+  const leftMin = Math.max(0, min(index));
+  const rightMin = Math.max(0, min(index + 1));
+  // Impossible minimums must not freeze the divider at the midpoint. Reserve
+  // half the available pair proportionally, leaving room for compact resizing.
+  const requested = leftMin + rightMin;
+  const relaxation = requested >= pair && requested > 0 ? pair / requested / 2 : 1;
+  const lo = leftMin * relaxation;
+  const hi = pair - rightMin * relaxation;
   const left = Math.max(lo, Math.min(hi, position - start));
   normalized[index] = left;
   normalized[index + 1] = pair - left;

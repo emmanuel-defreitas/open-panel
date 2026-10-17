@@ -81,6 +81,7 @@ interface PanelDom {
     frameIcon: HTMLElement;
     /** Width the accessories and menu take at the end of an overlaid title bar. */
     endInset: number;
+    headerReservedWidth?: number;
 }
 interface SurfaceRecord {
     controller: ViewController;
@@ -170,6 +171,41 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
     let lastStagePanel: string | null = null;
     const badges = new Map<string, string | number | boolean | null>();
     const panelDoms = new Map<string, PanelDom>();
+    let tabMeasureFrame = 0;
+    const tabResizeObserver = new ResizeObserver(() => scheduleTabMeasure());
+    lifetime.add(() => {
+        tabResizeObserver.disconnect();
+        cancelAnimationFrame(tabMeasureFrame);
+    });
+    function scheduleTabMeasure() {
+        if (tabMeasureFrame) return;
+        tabMeasureFrame = requestAnimationFrame(() => {
+            tabMeasureFrame = 0;
+            for (const dom of panelDoms.values()) {
+                const list = dom.tablist;
+                if (!list.clientWidth) continue;
+                // Measure intrinsic tab widths, independent of the current fill state.
+                setAttr(list, "data-measuring-tabs", "");
+                const style = getComputedStyle(list);
+                const tabs = Array.from(list.children) as HTMLElement[];
+                const total = tabs.reduce((sum, tab) => sum + tab.getBoundingClientRect().width, 0)
+                    + (parseFloat(style.columnGap) || 0) * Math.max(0, tabs.length - 1);
+                const actionWidth = dom.accessories.getBoundingClientRect().width;
+                // Keep the expanded action's footprint when a compact hook hides it,
+                // so hiding the control cannot make compact state oscillate.
+                if (actionWidth > 0) dom.headerReservedWidth = actionWidth;
+                const reserved = Math.max(0, (dom.headerReservedWidth ?? 0) - actionWidth);
+                const available = list.clientWidth - (parseFloat(style.paddingLeft) || 0)
+                    - (parseFloat(style.paddingRight) || 0) - reserved;
+                setAttr(list, "data-measuring-tabs", null);
+                const crowded = total >= available - 12;
+                setAttr(list, "data-crowded", crowded ? "" : null);
+                const compact = crowded || dom.el.hasAttribute("data-frame-only") || dom.el.hasAttribute("data-compact");
+                setAttr(dom.tabbar, "data-header-compact", compact ? "" : null);
+                for (const viewId of dom.tabs.keys()) records.get(viewId)?.controller.update({ isCompact: compact });
+            }
+        });
+    }
     const records = new Map<string, SurfaceRecord>();
     const dividerEls = new Map<string, HTMLElement>();
     const lastRects = new Map<string, Rect>();
@@ -181,6 +217,8 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
     let viewport = { w: host.clientWidth, h: host.clientHeight };
     let gap = 6;
     let tabbarHeight = 34;
+    let resizeMinWidth: number | undefined;
+    let resizeMinHeight: number | undefined;
     const tween = new LayoutTween();
     const camera = new RectSpring(UNIT);
     // Assigned during setup (navigation.ts).
@@ -236,7 +274,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
     function applyTheme() {
         setAttr(root, "data-theme", options.theme ?? "system");
         const tabs = options.tabs ?? {};
-        setAttr(root, "data-tab-fill", tabs.fill ? "" : null);
+        setAttr(root, "data-tab-fill", tabs.fill ? (tabs.fill === "active" ? "active" : "") : null);
         setAttr(root, "data-tab-bleed", tabs.inset === 0 ? "" : null);
         if (tabs.inset !== undefined) root.style.setProperty("--open-panel-tab-inset", `${tabs.inset}px`);
         else if (!options.tokens?.["--open-panel-tab-inset"])
@@ -249,6 +287,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
             else root.style.setProperty(key, value);
         appliedTokens = new Set(Object.keys(tokens));
         setAttr(root, "data-navigation", String(navigationMode()));
+        setAttr(root, "data-header-mode", options.headerMode ?? "separate");
         readMetrics();
     }
     function readMetrics() {
@@ -257,6 +296,10 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
         const t = parseFloat(style.getPropertyValue("--open-panel-tabbar-height"));
         if (Number.isFinite(g)) gap = g;
         if (Number.isFinite(t)) tabbarHeight = t;
+        const minW = parseFloat(style.getPropertyValue("--open-panel-resize-min-width"));
+        const minH = parseFloat(style.getPropertyValue("--open-panel-resize-min-height"));
+        resizeMinWidth = Number.isFinite(minW) && minW > 0 ? minW : undefined;
+        resizeMinHeight = Number.isFinite(minH) && minH > 0 ? minH : undefined;
     }
 
     // ---------------------------------------------------------------- geometry
@@ -330,6 +373,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
     // ---------------------------------------------------------------- surfaces
     function viewState(viewId: string): ViewState {
         return {
+            isCompact: false,
             visible: false,
             focused: false,
             selected: false,
@@ -572,11 +616,15 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
             },
             { passive: false },
         );
+        tabResizeObserver.observe(tablist);
+        tabResizeObserver.observe(accessories);
         return dom;
     }
     function destroyPanelDom(panelId: string) {
         const dom = panelDoms.get(panelId);
         if (!dom) return;
+        tabResizeObserver.unobserve(dom.tablist);
+        tabResizeObserver.unobserve(dom.accessories);
         dom.el.remove();
         dom.tabbar.remove();
         dom.handles?.remove();
@@ -592,6 +640,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
         if (modes.every((m) => m === "never")) return "hidden";
         if (panel.views.length === 1 && modes[0] === "auto")
             return lifted()?.id === panel.id ? "normal" : "hidden";
+        if (options.headerMode === "overlay") return "overlay";
         if (panel.views.length === 1 && modes[0] === "overlay") return "overlay";
         return "normal";
     }
@@ -658,6 +707,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
             list.scrollLeft = left + tab.offsetWidth - list.clientWidth + 8;
     }
     function updateTabs() {
+        scheduleTabMeasure();
         for (const [panelId, dom] of panelDoms) {
             const panel = findPanel(panelId);
             if (!panel) continue;
@@ -681,6 +731,7 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
                 if (selected && !tab.el.hasAttribute("data-selected")) revealTab(dom.tablist, tab.el);
                 setAttr(tab.el, "data-selected", selected ? "" : null);
                 setAttr(tab.el, "data-focused", focusedView === viewId ? "" : null);
+                setAttr(tab.el, "data-full-width", typeOf(viewId).fullWidth ? "" : null);
                 const closable = typeOf(viewId).closable !== false;
                 setAttr(tab.close, "hidden", closable ? null : "");
                 setAttr(tab.close, "title", `Close ${title}`);
@@ -2024,8 +2075,9 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
     function minExtent(node: LayoutNode, axis: "x" | "y"): number {
         if (node.kind === "stage") return node.child ? minExtent(node.child, axis) : 120;
         if (node.kind === "panel") {
-            const floor = axis === "x" ? 80 : tabbarHeight + 28;
-            return floor;
+            const minimum = axis === "x" ? resizeMinWidth : resizeMinHeight;
+            // Layout cells include the gutter around the visible panel.
+            return minimum !== undefined ? minimum + gap : axis === "x" ? 80 : tabbarHeight + 28;
         }
         const mins = node.children.map((c) => minExtent(c, axis));
         const inner =
@@ -2142,8 +2194,8 @@ export function createWorkspace(host: HTMLElement, initialOptions: WorkspaceOpti
         gesture = true;
         updateInteractivity();
         setAttr(root, "data-resizing", "float");
-        const minW = 160;
-        const minH = tabbarHeight + 60;
+        const minW = resizeMinWidth ?? 160;
+        const minH = resizeMinHeight ?? tabbarHeight + 60;
         const move = (ev: PointerEvent) => {
             const p = localPoint(ev);
             const dx = p.x - startPoint.x;

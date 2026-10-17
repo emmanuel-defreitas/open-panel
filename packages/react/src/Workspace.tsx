@@ -157,6 +157,11 @@ export function useView<P extends object = Params>(): ViewApi<P> {
         [view, state],
     );
 }
+/** Whether the current view's header is crowded or its panel is compact. */
+export function useIsCompact(): boolean {
+    return useView().isCompact;
+}
+
 /** Like useView, but null outside view content (e.g. in shared components). */
 export function useOptionalView(): ViewHandle | null {
     return useContext(ViewContext);
@@ -192,8 +197,14 @@ export interface ViewTypeProps<P extends object = Params> extends ViewRules {
     /** Unique type name. `<View type>` and `open(type)` refer to it. */
     id: string;
     title?: string | ((view: ViewHandle<P>) => string);
-    /** A React node, or trusted SVG/HTML markup as a string. */
+    /** Prefix icon; defaults to a single-tab symbol. Set null/false to omit. Strings are trusted markup. */
     icon?: ReactNode;
+    /** Decorative layer behind the tab label and controls. */
+    tabBackground?: ReactNode;
+    /** Replaces the panel menu while selected. Undefined keeps the default; null hides it. */
+    headerAction?: Renderable<P>;
+    /** Let this tab consume all available row width. */
+    fullWidth?: boolean;
     /** Content for each view. Receives nothing; use `useView()` inside. */
     children?: ReactNode;
     /** Alternative to children: render from the view's params and state. */
@@ -377,6 +388,8 @@ function isMarkup(icon: ReactNode): icon is string {
 
 // ------------------------------------------------------------------ Workspace
 export interface WorkspaceProps {
+    /** Separate reserves header space; overlay lets content scroll beneath the visible header. */
+    headerMode?: "separate" | "overlay";
     children?: ReactNode;
     floating?: false | FloatingLayer;
     navigation?: false | "focus" | "free";
@@ -389,8 +402,8 @@ export interface WorkspaceProps {
     panelMenu?: boolean | ((entries: MenuEntry[], context: PanelMenuContext) => MenuEntry[]);
     /** Show panel menus with your own component. Always calls the latest function. */
     renderMenu?(request: MenuRequest): void;
-    /** Tab layout: `fill` makes tabs share the tab row; `inset` (px) is the space around them. */
-    tabs?: { fill?: boolean; inset?: number };
+    /** Tab layout: `fill: true` shares the row; `fill: "active"` expands the selected tab when intrinsic tabs come within 12px of filling the row. */
+    tabs?: { fill?: boolean | "active"; inset?: number };
     /** Where the built-in "Hide" animates to, e.g. your dock or tray button. */
     hideToward?(panelId: string): Element | { x: number; y: number; w: number; h: number } | null | undefined;
     label?: string;
@@ -441,11 +454,12 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
         allow: t.allow,
         singleton: t.singleton,
         closable: t.closable,
+        fullWidth: t.fullWidth,
         minSize: t.minSize,
         tabbar: t.tabbar,
         gestures: t.gestures,
         className: t.className,
-        icon: isMarkup(t.icon) ? t.icon : undefined,
+        icon: isMarkup(t.icon) && t.tabBackground === undefined ? t.icon : undefined,
         title: typeof t.title === "function" ? wrap(t.id, "title") : t.title,
         iframe: typeof t.iframe === "function" ? wrap(t.id, "iframe") : t.iframe,
         mount: t.mount ? wrap(t.id, "mount") : undefined,
@@ -457,6 +471,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
                 t.id,
                 typeof t.title === "function" ? "ƒ" : t.title,
                 isMarkup(t.icon) ? t.icon : "",
+                t.tabBackground !== undefined,
                 typeof t.iframe === "function" ? "ƒ" : JSON.stringify(t.iframe ?? null),
                 !!t.mount,
                 t.menu === undefined,
@@ -464,6 +479,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
                 t.allow,
                 t.singleton,
                 t.closable,
+                t.fullWidth,
                 t.minSize,
                 t.tabbar,
                 t.gestures,
@@ -491,6 +507,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
         const handle = createWorkspace(host.current!, {
             types: buildTypes(),
             floating: p.floating,
+            headerMode: p.headerMode,
             navigation: p.navigation,
             motion: p.motion,
             theme: p.theme,
@@ -543,6 +560,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
         if (!ws) return;
         ws.update({
             floating: props.floating,
+            headerMode: props.headerMode,
             navigation: props.navigation,
             motion: props.motion,
             theme: props.theme,
@@ -557,6 +575,7 @@ function WorkspaceImpl(props: WorkspaceProps, forwarded: Ref<WorkspaceHandle>) {
     }, [
         ws,
         props.floating,
+        props.headerMode,
         props.navigation,
         props.motion,
         props.theme,
@@ -646,11 +665,32 @@ function SurfacePortal({ surface, type }: { surface: Surface; type: ViewTypeProp
                 !type.iframe &&
                 !type.mount &&
                 createPortal(<Content type={type} />, surface.content, view.id)}
-            {type && type.icon != null && !isMarkup(type.icon) && createPortal(type.icon, surface.icon)}
-            {type?.accessory != null && createPortal(<Accessory type={type} />, surface.accessory)}
+            {type && (!isMarkup(type.icon) || type.tabBackground !== undefined) &&
+                createPortal(<TabDecoration type={type} />, surface.icon)}
+            {type && (type.accessory != null || type.headerAction !== undefined) &&
+                createPortal(<>
+                    <Accessory type={type} />
+                    {type.headerAction !== undefined && <span data-open-panel-part="header-action">
+                        {typeof type.headerAction === "function"
+                            ? <RenderWithView render={type.headerAction} /> : type.headerAction}
+                    </span>}
+                </>, surface.accessory)}
         </ViewContext.Provider>
     );
 }
+function TabDecoration({ type }: { type: ViewTypeProps<any> }) {
+    const icon = type.icon === undefined ? (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" rx="3" />
+            <path d="M3 9h18M7 6.5h4" />
+        </svg>
+    ) : isMarkup(type.icon) ? <span dangerouslySetInnerHTML={{ __html: type.icon }} /> : type.icon;
+    return <>
+        {type.tabBackground != null && <span data-open-panel-part="tab-background" aria-hidden="true">{type.tabBackground}</span>}
+        {icon != null && icon !== false && <span data-open-panel-part="tab-prefix" aria-hidden="true">{icon}</span>}
+    </>;
+}
+
 function Content({ type }: { type: ViewTypeProps<any> }) {
     if (type.render) return <RenderWithView render={type.render} />;
     return <>{type.children}</>;

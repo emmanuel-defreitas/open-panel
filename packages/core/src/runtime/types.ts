@@ -100,6 +100,8 @@ export interface IframeOptions {
 export type ViewPlacement = "docked" | "stage" | "floating" | "hidden";
 
 export interface ViewState {
+    /** True for a crowded header or a panel too small for its normal presentation. */
+    isCompact: boolean;
     visible: boolean;
     focused: boolean;
     selected: boolean;
@@ -202,6 +204,8 @@ export interface OpenOptions {
 }
 
 export interface WorkspaceOptions {
+    /** Separate reserves header space; overlay lets content scroll beneath the visible header. */
+    headerMode?: "separate" | "overlay";
     types: ViewTypes;
     /** Where floating panels live. Default "overlay". */
     floating?: false | FloatingLayer;
@@ -218,10 +222,11 @@ export interface WorkspaceOptions {
     document?: LayoutDocument;
     /** Save to and restore from localStorage. */
     persist?: { key: string; version?: string | number };
-    /** Tab layout. `fill`: tabs grow to share the tab row. `inset`: space in px between the tabs and
+    /** Tab layout. `fill: true` shares the row; `fill: "active"` expands the selected tab when intrinsic tabs come within 12px of filling the row.
+     * `inset`: space in px between the tabs and
      * the bar's top and sides; 0 makes them meet the edges. Defaults: `{ fill: false, inset: 4 }`.
      * Also available as the `--open-panel-tab-inset` token. */
-    tabs?: { fill?: boolean; inset?: number };
+    tabs?: { fill?: boolean | "active"; inset?: number };
     /** The panel menu. `true` (default) adds the built-in items after each view type's `menu` items;
      * `false` leaves only the view type's items. A function receives the full menu (view type items,
      * then built-ins) and returns the entries to show: filter, reorder or add items for every panel.

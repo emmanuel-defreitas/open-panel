@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Article } from "./Article";
+import { useInteractionSounds } from "./sounds";
 import { Glass } from "@samasante/liquid-glass";
 import {
   Panel,
@@ -10,6 +12,9 @@ import {
   WorkspaceProvider,
   useOptionalWorkspace,
   useView,
+  useWorkspace,
+  usePanelViews,
+  useFocusedView,
   useWorkspaceState,
   type Theme,
 } from "open-panel-react";
@@ -17,25 +22,64 @@ import {
 const themes: Theme[] = ["light", "medium", "dark", "darker"];
 
 // The icon slot keeps the decorative background attached to its tab.
-function TabGlass() {
+function TabGlass({ theme }: { theme: Theme }) {
   const { selected } = useView();
   return (
     <Glass
       //  className="tab-glass"
       aria-hidden="true"
+
+      muted
+
       radius={10}
+      //   hidden={!selected}
       optics={{
-        frost: selected ? 10 : 0,
-        brightness: selected ? 0.05 : 0,
-        strength: 0.6,
-        dispersion: 0.4,
-        sheen: 0.9,
+        depth: 0.8,
+        bend: 0.4,
+        frost: selected ? 4 : 8,
+        brightness: selected ? (theme === "light" ? -0.02 : -0.3) : 0,
+        strength: 0.2,
+        dispersion: 0.2,
+        sheen: 0.1,
+
+        curvature: 0.2,
+        sheenAngle: 0.7,
+        softEdge: true,
+        specular: selected ? 1 : 0.1,
+        sheenWidth: 1,
+
+        glow: 0.1,
+        sheenDark: theme === "light",
       }}
+
       style={{ width: "100%", height: "100%" }}
     >
       {/* A child enables the package's backdrop material mode. */}
       <span className="tab-glass-fill" />
     </Glass>
+  );
+}
+
+function TabsAction() {
+  const ws = useWorkspace();
+  const tabs = usePanelViews();
+  return (
+    <select
+      className="tabs-action"
+      aria-label="Panel tabs"
+      value=""
+      onChange={(event) => ws.focus(event.target.value)}
+    >
+      <option value="" disabled>
+        Tabs ({tabs.length})
+      </option>
+      {tabs.map((tab) => (
+        <option key={tab.id} value={tab.id}>
+          {tab.title}
+          {tab.selected ? " ✓" : ""}
+        </option>
+      ))}
+    </select>
   );
 }
 
@@ -49,9 +93,11 @@ export function App() {
 
 function Demo() {
   const ws = useOptionalWorkspace();
+  const sound = useInteractionSounds(ws);
   const snapshot = useWorkspaceState();
   const [theme, setTheme] = useState<Theme>("dark");
-  const focused = snapshot.views.find((view) => view.id === snapshot.focusedView);
+  const [headerMode, setHeaderMode] = useState<"separate" | "overlay">("overlay");
+  const focused = useFocusedView();
   const hidden = new Set(snapshot.hidden.map((panel) => panel.panelId));
   const panels = new Set(
     snapshot.views.filter((view) => !hidden.has(view.panelId)).map((view) => view.panelId),
@@ -66,7 +112,7 @@ function Demo() {
   }
 
   return (
-    <div className="demo" data-theme={theme}>
+    <div className="demo" data-theme={theme} data-cuelume-emphasis="subtle">
       <header className="demo-header">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">
@@ -76,19 +122,40 @@ function Demo() {
           <span className="subtitle">Layout playground</span>
         </div>
         <div className="controls" aria-label="Layout controls">
+          <select
+            aria-label="Panel header mode"
+            data-cuelume-select
+            value={headerMode}
+            onChange={(event) => setHeaderMode(event.target.value as "separate" | "overlay")}
+          >
+            <option value="overlay">Overlay header</option>
+            <option value="separate">Separate header</option>
+          </select>
+          <button aria-pressed={sound.enabled} onClick={() => void sound.toggleSound()}>
+            Sound {sound.enabled ? "on" : "off"}
+          </button>
           <button onClick={addPanel} disabled={!ws}>
             + Add panel
           </button>
-          <button onClick={() => ws?.navigation.toggle()} disabled={!focused && !snapshot.framed}>
+          <button
+            data-cuelume-toggle
+            onClick={() => ws?.navigation.toggle()}
+            disabled={!focused && !snapshot.framed}
+          >
             {snapshot.framed ? "Restore layout" : "Maximize"}
           </button>
-          <button onClick={() => focused && ws?.toggleDock(focused.id)} disabled={!focused}>
+          <button
+            data-cuelume-toggle
+            onClick={() => focused && ws?.toggleDock(focused.id)}
+            disabled={!focused}
+          >
             Float / dock
           </button>
-          <button onClick={() => ws?.reset()} disabled={!ws}>
+          <button data-cuelume-tap onClick={() => ws?.reset()} disabled={!ws}>
             Reset layout
           </button>
           <select
+            data-cuelume-select
             aria-label="Color theme"
             value={theme}
             onChange={(event) => setTheme(event.target.value as Theme)}
@@ -108,6 +175,8 @@ function Demo() {
       <main className="demo-main">
         <Workspace
           theme={theme}
+          headerMode={headerMode}
+          tabs={{ fill: "active" }}
           navigation="focus"
           floating="overlay"
           storageKey="open-panel-playground:layout"
@@ -117,11 +186,12 @@ function Demo() {
         >
           <ViewType<{ name: string }>
             id="blank"
-            icon={<TabGlass />}
+            tabBackground={<TabGlass theme={theme} />}
+            headerAction={<TabsAction />}
             title={(view) => view.params.name || "Panel"}
             placement="stage"
           >
-            <div className="blank-panel" />
+            <Article />
           </ViewType>
           <Split weights={[1, 2.5, 1]}>
             <Panel id="left">

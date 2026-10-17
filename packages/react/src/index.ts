@@ -12,6 +12,7 @@ export {
     useWorkspaceState,
     useWorkspaceSelector,
     useView,
+    useIsCompact,
     useOptionalView,
     useViewTitle,
     useViewBadge,
@@ -29,3 +30,5 @@ export type {
 } from "./Workspace";
 export { layout, createDocument, formatCombo } from "open-panel-core";
 export type * from "open-panel-core";
+
+export { useViewState, usePanelViews, useFocusedView, useWorkspaceActions, useWorkspaceEvent } from "./hooks";
