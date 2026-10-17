@@ -362,3 +362,15 @@ bun run --cwd demo build       # production playground
 ```
 
 The demo resolves local package source for live development. Package builds produce `dist` exports for consumers. See [React reference](packages/react/README.md), [core reference](packages/core/README.md), and [element reference](packages/element/README.md) for adapter details.
+
+## Tab context menus and scrollbars
+
+`onTabContextMenu={({ event, view, panelId, tab }) => ...}` exposes tab gestures.
+Return `false` to hand the bubbling event to a consumer's context-menu trigger;
+call `event.preventDefault()` when opening your own menu directly. Keyboard menu
+gestures follow the same path. See the [React + COSS integration example](docs/context-menu.md).
+
+Content scrollbars use transparent tracks and subtle theme-aware thumbs. Override
+`--open-panel-scrollbar-thumb` and `--open-panel-scrollbar-thumb-hover` through CSS
+or `Workspace.tokens`. The native scrollbar keeps platform scrolling behavior and
+uses system colors in forced-color mode.

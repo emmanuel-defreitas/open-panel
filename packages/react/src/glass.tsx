@@ -9,26 +9,23 @@ export function GlassTabBackground({ theme = "dark", ...props }: GlassTabBackgro
   return (
     <Glass
       aria-hidden="true"
-
-      muted
-
+      hidden={!selected}
       radius={10}
       optics={{
-        depth: 0.8,
-        bend: 0.4,
-        frost: selected ? 4 : 8,
-        brightness: selected ? (theme === "light" ? -0.02 : -0.3) : 0,
+        depth: 0.4,
+        bend: 0.2,
+        frost: selected ? 2 : 0,
+        brightness: selected ? (theme === "light" ? -0.06 : -0.3) : 0,
         strength: 0.2,
-        dispersion: 0.2,
-        sheen: 0.1,
-
+        dispersion: 0,
+        sheen: 0.5,
         curvature: 0.2,
-        sheenAngle: 0.7,
+        sheenAngle: 2,
         softEdge: true,
-        specular: selected ? 1 : 0.1,
-        sheenWidth: 1,
-
-        glow: 0.1,
+        bendWidth: 0.1,
+        specular: selected ? (theme === "light" ? 0.85 : 0.5) : 0,
+        sheenWidth: theme === "light" ? 0.2 : 0,
+        glow: 0.5,
         sheenDark: theme === "light",
       }}
 
