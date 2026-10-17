@@ -1,0 +1,60 @@
+{
+    "name": "open-panel-react",
+    "version": "0.1.0",
+    "description": "React bindings for Open-Panel: dockable, zoomable workspaces for web tools.",
+    "type": "module",
+    "author": "Emmanuel De Freitas",
+    "homepage": "https://github.com/emmanuel-defreitas/open-panel",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/emmanuel-defreitas/open-panel.git",
+        "directory": "packages/react"
+    },
+    "keywords": [
+        "react",
+        "docking",
+        "layout",
+        "tabs",
+        "panels",
+        "workspace"
+    ],
+    "sideEffects": false,
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "source": "./src/index.ts",
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "peerDependencies": {
+        "open-panel-core": "^0.1.0",
+        "react": ">=18.3",
+        "react-dom": ">=18.3"
+    },
+    "scripts": {
+        "build": "tsup && cp ../../LICENSE*.md .",
+        "typecheck": "tsc --noEmit",
+        "prepack": "bun run build"
+    },
+    "devDependencies": {
+        "open-panel-core": "workspace:*",
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "tsup": "catalog:",
+        "typescript": "catalog:",
+        "vitest": "catalog:"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

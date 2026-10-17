@@ -1,0 +1,8 @@
+dist
+node_modules
+test-results
+notes/shots
+package-lock.json
+.claude
+LICENSE*.md
+site/src/components/logo-paths.ts
