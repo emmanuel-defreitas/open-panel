@@ -1,0 +1,34 @@
+:where(.open-panel [data-open-panel-part="panel"]) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: auto;
+  background: var(--open-panel-panel);
+  border-radius: var(--open-panel-radius);
+  box-shadow: 0 0 0 1px var(--open-panel-border);
+  will-change: transform;
+}
+:where(.open-panel [data-open-panel-part="panel"][data-floating]) {
+  box-shadow:
+    0 0 0 1px var(--open-panel-border),
+    var(--open-panel-shadow-float);
+}
+:where(.open-panel[data-dragging] [data-open-panel-part="panel"][data-floating]) {
+  box-shadow:
+    0 0 0 1px var(--open-panel-border),
+    var(--open-panel-shadow-float);
+}
+:where(.open-panel [data-open-panel-part="panel"][data-lifted]) {
+  box-shadow:
+    0 0 0 1px var(--open-panel-border),
+    var(--open-panel-shadow-lifted);
+}
+:where(.open-panel [data-appearing]) {
+  animation: open-panel-appear 220ms var(--open-panel-ease) both;
+}
+@keyframes open-panel-appear {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
