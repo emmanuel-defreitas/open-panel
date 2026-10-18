@@ -1,0 +1,109 @@
+:where(.open-panel) {
+  /* Metrics */
+  --open-panel-gap: 6px;
+  --open-panel-radius: 10px;
+  --open-panel-tab-radius: 7px;
+  --open-panel-tabbar-height: 34px;
+  --open-panel-font:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --open-panel-font-size: 12.5px;
+  --open-panel-tab-max-width: 220px;
+  --open-panel-tab-inset: 4px;
+
+  /* Colors: light */
+  --open-panel-bg: #dfe0e4;
+  --open-panel-panel: #ffffff;
+  --open-panel-tabbar: #f1f1f4;
+  --open-panel-tab-hover: rgba(15, 17, 25, 0.05);
+  --open-panel-tab-active: #ffffff;
+  --open-panel-text: #1c1d22;
+  --open-panel-text-muted: #636670;
+  --open-panel-border: rgba(15, 17, 25, 0.1);
+  --open-panel-accent: violet;
+  --open-panel-accent-contrast: #ffffff;
+  --open-panel-stage: #eceef1;
+  --open-panel-slot: #cdd0d6;
+  --open-panel-menu: #ffffff;
+  --open-panel-menu-hover: rgba(15, 17, 25, 0.06);
+  --open-panel-shadow-float: 0 1px 2px rgba(10, 12, 20, 0.08), 0 12px 32px -8px rgba(10, 12, 20, 0.22);
+  --open-panel-shadow-lifted: 0 2px 4px rgba(10, 12, 20, 0.1), 0 24px 48px -12px rgba(10, 12, 20, 0.35);
+  --open-panel-focus-ring: 0 0 0 2px var(--open-panel-accent);
+  --open-panel-tab-bg: rgba(255, 255, 255, 0.5);
+  /* Motion */
+  --open-panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --open-panel-glass-shadow: 0 0 0 1px rgba(0, 0, 0, 0.13);
+}
+
+:where(.open-panel[data-theme="medium"]) {
+  --open-panel-slot: #2c2c30;
+  --open-panel-bg: #1f1f22;
+  --open-panel-panel: #45454a;
+  --open-panel-tabbar: #38383c;
+  --open-panel-tab-hover: rgba(255, 255, 255, 0.06);
+  --open-panel-tab-active: #45454a;
+  --open-panel-text: #f1f1f3;
+  --open-panel-text-muted: #bcbcc3;
+  --open-panel-border: rgba(0, 0, 0, 0.28);
+  --open-panel-accent: violet;
+  --open-panel-stage: #2a2a2e;
+  --open-panel-menu: #3a3a3f;
+  --open-panel-menu-hover: rgba(255, 255, 255, 0.08);
+  --open-panel-shadow-float: 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 40px -8px rgba(0, 0, 0, 0.55);
+  --open-panel-shadow-lifted: 0 2px 6px rgba(0, 0, 0, 0.35), 0 28px 56px -12px rgba(0, 0, 0, 0.7);
+}
+:where(.open-panel[data-theme="dark"]) {
+  --open-panel-slot: #1f2024;
+  --open-panel-bg: #0c0d0f;
+  --open-panel-panel: #1a1b1f;
+  --open-panel-tabbar: #141518;
+  --open-panel-tab-hover: rgba(255, 255, 255, 0.05);
+  --open-panel-tab-active: #1a1b1f;
+  --open-panel-text: #e7e8eb;
+  --open-panel-text-muted: #9699a3;
+  --open-panel-border: rgba(255, 255, 255, 0.07);
+  --open-panel-accent: violet;
+  --open-panel-stage: #111215;
+  --open-panel-menu: #202126;
+  --open-panel-menu-hover: rgba(255, 255, 255, 0.07);
+  --open-panel-shadow-float: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px -8px rgba(0, 0, 0, 0.7);
+  --open-panel-shadow-lifted: 0 2px 6px rgba(0, 0, 0, 0.45), 0 28px 60px -12px rgba(0, 0, 0, 0.85);
+  --open-panel-tab-bg: rgba(0, 0, 0, 0.5);
+}
+:where(.open-panel[data-theme="darker"]) {
+  --open-panel-slot: #15161a;
+  --open-panel-bg: #050506;
+  --open-panel-panel: #111215;
+  --open-panel-tabbar: #0b0c0e;
+  --open-panel-tab-hover: rgba(255, 255, 255, 0.045);
+  --open-panel-tab-active: #111215;
+  --open-panel-text: #d9dbe0;
+  --open-panel-text-muted: #8a8e98;
+  --open-panel-border: rgba(255, 255, 255, 0.06);
+  --open-panel-accent: violet;
+  --open-panel-stage: #09090b;
+  --open-panel-menu: #17181b;
+  --open-panel-menu-hover: rgba(255, 255, 255, 0.06);
+  --open-panel-shadow-float: 0 1px 2px rgba(0, 0, 0, 0.5), 0 16px 40px -8px rgba(0, 0, 0, 0.8);
+  --open-panel-shadow-lifted: 0 2px 6px rgba(0, 0, 0, 0.5), 0 28px 60px -12px rgba(0, 0, 0, 0.9);
+  --open-panel-tab-bg: rgba(0, 0, 0, 0.5);
+}
+@media (prefers-color-scheme: dark) {
+  :where(.open-panel[data-theme="system"]) {
+    --open-panel-slot: #1f2024;
+    --open-panel-bg: #0c0d0f;
+    --open-panel-panel: #1a1b1f;
+    --open-panel-tabbar: #141518;
+    --open-panel-tab-hover: rgba(255, 255, 255, 0.05);
+    --open-panel-tab-active: #1a1b1f;
+    --open-panel-text: #e7e8eb;
+    --open-panel-text-muted: #9699a3;
+    --open-panel-border: rgba(255, 255, 255, 0.07);
+    --open-panel-accent: violet;
+    --open-panel-stage: #111215;
+    --open-panel-menu: #202126;
+    --open-panel-menu-hover: rgba(255, 255, 255, 0.07);
+    --open-panel-shadow-float: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px -8px rgba(0, 0, 0, 0.7);
+    --open-panel-shadow-lifted: 0 2px 6px rgba(0, 0, 0, 0.45), 0 28px 60px -12px rgba(0, 0, 0, 0.85);
+    --open-panel-glass-shadow: 0 0 0 1px rgba(0, 0, 0, 0.13);
+  }
+}

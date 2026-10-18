@@ -1,0 +1,40 @@
+:where(.open-panel [data-open-panel-part="backdrop"], .open-panel [data-open-panel-part="stage-empty"]) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: var(--open-panel-radius);
+  overflow: hidden;
+}
+:where(.open-panel [data-open-panel-part="backdrop"]) {
+  z-index: 1;
+  background: var(--open-panel-stage);
+}
+:where(.open-panel:not([data-has-stage]) [data-open-panel-part="backdrop"]) {
+  background: transparent;
+  border-radius: 0;
+}
+:where(.open-panel [data-open-panel-part="stage-empty"]) {
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+:where(.open-panel [data-open-panel-part="stage-empty"] > *) {
+  pointer-events: auto;
+}
+:where(.open-panel [data-open-panel-part="empty"]) {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+}
+:where(.open-panel [data-open-panel-part="chrome"]) {
+  position: absolute;
+  inset: 0;
+  z-index: 4000;
+  pointer-events: none;
+}
+:where(.open-panel [data-open-panel-part="chrome"] > *) {
+  pointer-events: auto;
+}
