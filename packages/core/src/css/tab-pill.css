@@ -1,0 +1,27 @@
+/* Inactive tabs use a solid, quiet surface rather than a glass material. */
+:where(.open-panel) {
+  /* Cartesian interpolation avoids hue shifts when mixing near-neutral colors. */
+  --open-panel-tab-inactive-bg: color-mix(in oklab, var(--open-panel-panel) 96%, oklch(1 0 none));
+}
+
+:where(.open-panel [data-open-panel-part="tab"]:not([data-selected])) {
+  border-radius: 10px;
+  background: var(--open-panel-tab-inactive-bg);
+  box-shadow: none;
+}
+
+:where(
+  .open-panel [data-open-panel-part="tab"]:not([data-selected]) [data-open-panel-part="tab-background"]
+) {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.open-panel [data-open-panel-part="tab"]:not([data-selected]):hover) {
+    background: color-mix(in oklab, var(--open-panel-tab-inactive-bg) 95%, currentColor);
+  }
+}
+
+:where(.open-panel [data-open-panel-part="tab"]:not([data-selected]):active) {
+  background: color-mix(in oklab, var(--open-panel-tab-inactive-bg) 90%, currentColor);
+}

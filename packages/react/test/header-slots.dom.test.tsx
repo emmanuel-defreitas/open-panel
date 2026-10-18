@@ -13,6 +13,7 @@ import {
   useWorkspaceActions,
   useWorkspaceEvent,
   type WorkspaceHandle,
+  type TabContextMenuEvent,
 } from "../src";
 
 describe("tab customization", () => {
@@ -38,11 +39,82 @@ describe("tab customization", () => {
     host.remove();
     vi.unstubAllGlobals();
   });
+  it("hands off right-click and keyboard tab menus while preserving bubbling and current callbacks", async () => {
+    const builtin = vi.fn();
+    const parent = vi.fn();
+    const first = vi.fn((_request: TabContextMenuEvent) => false);
+    const latest = vi.fn((request: TabContextMenuEvent) => {
+      request.event.preventDefault();
+    });
+    const render = (handler?: (request: TabContextMenuEvent) => boolean | void) => (
+      <div onContextMenu={parent}>
+        <Workspace onTabContextMenu={handler} renderMenu={builtin}>
+          <ViewType id="notes" title="Notes" accessory={<button>Accessory</button>} />
+          <Panel>
+            <View id="a" type="notes" />
+            <View id="b" type="notes" />
+          </Panel>
+        </Workspace>
+      </div>
+    );
+    await act(async () => root.render(render(first)));
+    const tab = host.querySelector<HTMLElement>('[role="tab"][data-view="b"]')!;
+    const click = new MouseEvent("contextmenu", {
+      bubbles: true,
+      cancelable: true,
+      clientX: 42,
+      clientY: 84,
+    });
+    await act(async () => {
+      tab.dispatchEvent(click);
+    });
+    expect(first).toHaveBeenCalledTimes(1);
+    const request = first.mock.calls[0]![0];
+    expect(request.view.id).toBe("b");
+    expect(request.tab).toBe(tab);
+    expect(request.event).toBe(click);
+    expect(tab.getAttribute("aria-selected")).toBe("true");
+    expect(click.defaultPrevented).toBe(false);
+    expect(parent).toHaveBeenCalledTimes(1);
+    expect(builtin).not.toHaveBeenCalled();
+    await act(async () => {
+      tab.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "F10", shiftKey: true, bubbles: true, cancelable: true }),
+      );
+    });
+    expect(first).toHaveBeenCalledTimes(2);
+    expect(parent).toHaveBeenCalledTimes(2);
+    expect(builtin).not.toHaveBeenCalled();
+    await act(async () => root.render(render(latest)));
+    const intercepted = new MouseEvent("contextmenu", { bubbles: true, cancelable: true });
+    await act(async () => {
+      tab.dispatchEvent(intercepted);
+    });
+    expect(latest).toHaveBeenCalledTimes(1);
+    expect(first).toHaveBeenCalledTimes(2);
+    expect(intercepted.defaultPrevented).toBe(true);
+    expect(builtin).not.toHaveBeenCalled();
+    await act(async () => {
+      host
+        .querySelector('[data-open-panel-part="accessory"] button')!
+        .dispatchEvent(new MouseEvent("contextmenu", { bubbles: true }));
+    });
+    expect(latest).toHaveBeenCalledTimes(1);
+    await act(async () => root.render(render()));
+    await act(async () => {
+      tab.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true }));
+    });
+    expect(builtin).toHaveBeenCalledTimes(1);
+  });
   it("ships scroll fades by default and updates the option without remounting content", async () => {
-    const render = (scrollFade?: boolean | { size: number }) => <Workspace scrollFade={scrollFade}>
-      <ViewType id="notes" title="Notes"><textarea defaultValue="Keep this draft" /></ViewType>
-      <View id="notes" type="notes" />
-    </Workspace>;
+    const render = (scrollFade?: boolean | { size: number }) => (
+      <Workspace scrollFade={scrollFade}>
+        <ViewType id="notes" title="Notes">
+          <textarea defaultValue="Keep this draft" />
+        </ViewType>
+        <View id="notes" type="notes" />
+      </Workspace>
+    );
     await act(async () => root.render(render()));
     const content = host.querySelector('[data-open-panel-part="content"]')!;
     const input = content.querySelector("textarea");

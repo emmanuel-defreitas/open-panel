@@ -1,0 +1,298 @@
+/* ------------------------------------------------------------------ tab bar */
+/* Two independent tab options (the `tabs` workspace option):
+ * - fill (data-tab-fill on the root): tabs grow to share the tab row's width. Nothing else changes.
+ * - inset (--open-panel-tab-inset, data-tab-bleed at 0): the space between the tabs and the bar's
+ *   top and sides. At 0 the tabs meet the bar's edges.
+ * Neither affects the accessories or the panel menu button, which always sit on the bar itself. */
+:where(.open-panel [data-open-panel-part="tabbar"]) {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--open-panel-tabbar-height);
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 0 2px 0 0;
+  background: var(--open-panel-tabbar);
+  border-radius: var(--open-panel-radius) var(--open-panel-radius) 0 0;
+  box-shadow: inset 0 -1px 0 var(--open-panel-border);
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+  overflow: hidden;
+  touch-action: none;
+}
+:where(.open-panel [data-open-panel-part="tabs"]) {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: var(--open-panel-tab-inset) var(--open-panel-tab-inset) 0;
+  /* Room at the end for the selected tab's flared corner, which reaches past the tab. Without it
+   * the flare overflows the row, which then scrolls a few pixels and shifts every tab left. */
+  padding-inline-end: max(var(--open-panel-tab-inset), var(--open-panel-tab-radius));
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+:where(.open-panel [data-open-panel-part="tabs"])::-webkit-scrollbar {
+  display: none;
+}
+:where(.open-panel [data-open-panel-part="tab"]) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 72px;
+  max-width: var(--open-panel-tab-max-width);
+  flex: 0 1 auto;
+  padding: 0 6px 0 10px;
+  border-radius: var(--open-panel-tab-radius) var(--open-panel-tab-radius) 0 0;
+  color: var(--open-panel-text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: default;
+  outline: none;
+  transition:
+    background-color 120ms,
+    color 120ms;
+}
+/* The right padding assumes the close button's own space; without one, match the left. */
+:where(.open-panel [data-open-panel-part="tab"]:has(> [data-open-panel-part="tab-close"][hidden])) {
+  padding-right: 10px;
+}
+:where(.open-panel [data-open-panel-part="tab"]:hover) {
+  background: var(--open-panel-tab-hover);
+  color: var(--open-panel-text);
+}
+/* The selected tab joins the content below it: same fill, flared bottom corners, and it covers
+ * the bar's bottom border. */
+:where(.open-panel [data-open-panel-part="tab"][data-selected]) {
+  z-index: 1;
+  background: var(--open-panel-tab-active);
+  color: var(--open-panel-text);
+  box-shadow: inset 0 1px 5px color-mix(in srgb, var(--open-panel-text) 90%, transparent);
+  inset: 2px 0 4px color-mix(in srgb, var(--open-panel-panel) 50% transparent);
+}
+:where(.open-panel [data-open-panel-part="tab"][data-selected])::before,
+:where(.open-panel [data-open-panel-part="tab"][data-selected])::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: var(--open-panel-tab-radius);
+  height: var(--open-panel-tab-radius);
+  pointer-events: none;
+}
+:where(.open-panel [data-open-panel-part="tab"][data-selected])::before {
+  right: 100%;
+  background: radial-gradient(
+    circle at 0 0,
+    transparent var(--open-panel-tab-radius),
+    var(--open-panel-tab-active) calc(var(--open-panel-tab-radius) + 0.5px)
+  );
+}
+:where(.open-panel [data-open-panel-part="tab"][data-selected])::after {
+  left: 100%;
+  background: radial-gradient(
+    circle at 100% 0,
+    transparent var(--open-panel-tab-radius),
+    var(--open-panel-tab-active) calc(var(--open-panel-tab-radius) + 0.5px)
+  );
+}
+/* The focused panel's selected tab carries the accent along its top. */
+:where(.open-panel [data-open-panel-part="panel"][data-focused] [data-open-panel-part="tab"][data-selected]),
+:where(
+  .open-panel [data-open-panel-part="tabbar"][data-focused] [data-open-panel-part="tab"][data-selected]
+) {
+  background:
+    linear-gradient(var(--open-panel-accent), var(--open-panel-accent)) center top / 100% 2px no-repeat,
+    var(--open-panel-tab-active);
+}
+:where(.open-panel [data-open-panel-part="tab"]:focus-visible) {
+  box-shadow: inset var(--open-panel-focus-ring);
+}
+/* Reordering within the strip: neighbours slide, the dragged tab rides on top. */
+:where(.open-panel [data-open-panel-part="tab"][data-sorting]) {
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+:where(.open-panel [data-open-panel-part="tab"][data-dragging]) {
+  z-index: 2;
+  transition: none;
+  background: var(--open-panel-tab-active);
+  color: var(--open-panel-text);
+  cursor: grabbing;
+}
+/* Fill: tabs share the tab row's width. */
+:where(.open-panel[data-tab-fill] [data-open-panel-part="tab"]) {
+  flex: 1 1 0;
+  max-width: none;
+}
+:where(.open-panel [data-open-panel-part="tab-icon"]) {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: inherit;
+}
+:where(.open-panel [data-open-panel-part="tab-icon"]:empty) {
+  display: none;
+}
+:where(.open-panel [data-open-panel-part="tab-icon"] svg, .open-panel [data-open-panel-part="tab-icon"] img) {
+  width: 16px;
+  height: 16px;
+}
+:where(.open-panel [data-open-panel-part="tab-title"]) {
+  /* The title takes any spare width, so the close button always sits at the tab's right edge. */
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+:where(.open-panel [data-open-panel-part="tab-badge"]) {
+  flex: none;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
+  border-radius: 8px;
+  background: var(--open-panel-accent);
+  color: var(--open-panel-accent-contrast);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 16px;
+  text-align: center;
+}
+:where(.open-panel [data-open-panel-part="tab-badge"][data-dot]) {
+  min-width: 8px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--open-panel-text-muted);
+}
+:where(.open-panel [data-open-panel-part="tab"][data-selected] [data-open-panel-part="tab-badge"][data-dot]) {
+  background: var(--open-panel-text);
+}
+/* A dot (e.g. unsaved changes) sits where the close button is, and yields to it on hover. */
+:where(
+  .open-panel [data-open-panel-part="tab"][data-badge="dot"]:not(:hover) [data-open-panel-part="tab-close"]
+) {
+  display: none;
+}
+:where(.open-panel [data-open-panel-part="tab"][data-badge="dot"]:hover [data-open-panel-part="tab-badge"]) {
+  display: none;
+}
+:where(.open-panel [data-open-panel-part="tab"][data-badge="dot"] [data-open-panel-part="tab-badge"]) {
+  margin: 0 6px;
+}
+:where(.open-panel [data-open-panel-part="tab-close"], .open-panel [data-open-panel-part="panel-menu"]) {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  opacity: 0.55;
+  transition:
+    opacity 120ms,
+    background-color 120ms;
+}
+:where(.open-panel [data-open-panel-part="tab-close"]) {
+  opacity: 0;
+}
+:where(
+  .open-panel [data-open-panel-part="tab"]:hover [data-open-panel-part="tab-close"],
+  .open-panel [data-open-panel-part="tab"][data-selected] [data-open-panel-part="tab-close"]
+) {
+  opacity: 0.55;
+}
+:where(
+  .open-panel [data-open-panel-part="tab-close"]:hover,
+  .open-panel [data-open-panel-part="panel-menu"]:hover,
+  .open-panel [data-open-panel-part="panel-menu"][aria-expanded="true"]
+) {
+  opacity: 1;
+  background: var(--open-panel-tab-hover);
+}
+:where(
+  .open-panel [data-open-panel-part="tab-close"] svg,
+  .open-panel [data-open-panel-part="panel-menu"] svg
+) {
+  width: 14px;
+  height: 14px;
+}
+:where(.open-panel [data-open-panel-part="panel-menu"]) {
+  align-self: center;
+  margin-left: 2px;
+}
+:where(.open-panel :is([data-open-panel-part="accessories"], [data-open-panel-part="accessory"])) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+:where(.open-panel [data-open-panel-part="accessories"]) {
+  flex: none;
+}
+:where(.open-panel [data-open-panel-part="accessory"]:empty) {
+  display: none;
+}
+:where(.open-panel [hidden]) {
+  display: none !important;
+}
+:where(.open-panel [data-open-panel-part="panel"][data-tabbar="hidden"] [data-open-panel-part="tabbar"]) {
+  display: none;
+}
+:where(
+  .open-panel
+    [data-open-panel-part="panel"][data-compact]
+    :is(
+      [data-open-panel-part="tab-title"],
+      [data-open-panel-part="tab-close"],
+      [data-open-panel-part="accessories"],
+      [data-open-panel-part="tab-badge"]
+    )
+) {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ frame-only and overlay bars */
+/* Too small to use: the panel shows only its icon and the whole frame drags. */
+:where(.open-panel [data-open-panel-part="frame-icon"]) {
+  display: none;
+}
+:where(.open-panel [data-open-panel-part="panel"][data-frame-only]) {
+  cursor: grab;
+}
+:where(.open-panel [data-open-panel-part="panel"][data-frame-only] [data-open-panel-part="tabbar"]),
+:where(.open-panel [data-open-panel-part="panel"][data-frame-only] [data-open-panel-part="frame-icon"]) {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--open-panel-text-muted);
+}
+:where(.open-panel [data-open-panel-part="frame-icon"] > *) {
+  width: var(--open-panel-frame-icon-size, 24px);
+  height: var(--open-panel-frame-icon-size, 24px);
+  font-size: calc(var(--open-panel-frame-icon-size, 24px) * 0.6);
+  display: grid;
+  place-items: center;
+}
+/* An overlaid bar floats over content that draws its own title bar underneath. */
+:where(.open-panel [data-open-panel-part="tabbar"][data-overlay]) {
+  inset: auto;
+  left: 0;
+  top: 0;
+  pointer-events: auto;
+  background: transparent;
+  box-shadow: none;
+}
+:where(.open-panel [data-open-panel-part="tabbar"][data-overlay] [data-open-panel-part="tab"]) {
+  opacity: 0;
+}

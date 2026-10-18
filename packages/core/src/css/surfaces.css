@@ -1,0 +1,50 @@
+/* ------------------------------------------------------------------ surfaces */
+:where(.open-panel [data-open-panel-part="surface"]) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  pointer-events: auto;
+  border-radius: 0 0 var(--open-panel-radius) var(--open-panel-radius);
+  background: var(--open-panel-panel);
+  will-change: transform;
+}
+:where(.open-panel [data-open-panel-part="content"]) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  overflow: auto;
+  color: var(--open-panel-text);
+}
+:where(.open-panel [data-open-panel-part="surface"][data-scaled] [data-open-panel-part="content"]),
+:where(.open-panel[data-busy] [data-open-panel-part="content"]) {
+  pointer-events: none;
+  user-select: none;
+}
+:where(.open-panel [data-open-panel-iframe]) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+:where(.open-panel .open-panel-placeholder) {
+  display: grid;
+  place-content: center;
+  gap: 4px;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  color: var(--open-panel-text-muted);
+}
+:where(.open-panel .open-panel-placeholder strong) {
+  color: var(--open-panel-text);
+  font-weight: 600;
+}
+
+/* Without a bar above it, a surface rounds all four corners. (After the base surface rule:
+ * both have zero specificity, so order decides.) */
+:where(.open-panel [data-open-panel-part="surface"]:is([data-tabbar="overlay"], [data-tabbar="hidden"])) {
+  border-radius: var(--open-panel-radius);
+}

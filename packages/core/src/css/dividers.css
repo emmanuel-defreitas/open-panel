@@ -1,0 +1,48 @@
+/* ------------------------------------------------------------------ dividers */
+:where(.open-panel [data-open-panel-part="divider"]) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  pointer-events: auto;
+  touch-action: none;
+  outline: none;
+}
+:where(.open-panel [data-open-panel-part="divider"][data-axis="x"]) {
+  cursor: col-resize;
+}
+:where(.open-panel [data-open-panel-part="divider"][data-axis="y"]) {
+  cursor: row-resize;
+}
+:where(.open-panel [data-open-panel-part="divider"])::after {
+  content: "";
+  position: absolute;
+  border-radius: 2px;
+  background: var(--open-panel-accent);
+  opacity: 0;
+  transition: opacity 120ms;
+}
+:where(.open-panel [data-open-panel-part="divider"][data-axis="x"])::after {
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 1.5px);
+  width: 3px;
+}
+:where(.open-panel [data-open-panel-part="divider"][data-axis="y"])::after {
+  left: 0;
+  right: 0;
+  top: calc(50% - 1.5px);
+  height: 3px;
+}
+:where(.open-panel [data-open-panel-part="divider"]:hover)::after {
+  opacity: 0.8;
+  transition-delay: 150ms;
+}
+:where(.open-panel [data-open-panel-part="divider"][data-active])::after,
+:where(.open-panel [data-open-panel-part="divider"]:focus-visible)::after {
+  opacity: 1;
+  transition-delay: 0ms;
+}
+:where(.open-panel .open-panel-dividers) {
+  z-index: 20;
+}

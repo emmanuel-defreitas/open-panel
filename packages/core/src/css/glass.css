@@ -1,0 +1,86 @@
+/* A restrained material edge keeps light glass visible even over a blank panel. */
+:where(.open-panel) {
+  --open-panel-glass-tint: transparent;
+  --open-panel-glass-edge: none;
+  --open-panel-glass-reflection-opacity: 0;
+  --open-panel-glass-shadow: 0 0 0 1px rgba(0, 0, 0, 0.13);
+}
+:where(.open-panel:is([data-theme="light"], [data-theme="system"])) {
+  --open-panel-glass-reflection-opacity: 1;
+  --open-panel-glass-tint: linear-gradient(135deg, rgb(255 255 255 / 5%), rgb(210 216 228 / 0%));
+  --open-panel-glass-edge:
+    inset 0 1px 0 rgb(255 255 255 / 95%), inset 0 5px 0 1px rgb(30 35 45 / 4%),
+    inset 0 2px 9px rgb(30 35 45 / 4%);
+  --open-panel-glass-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.05);
+  --open-panel-tab-bg: rgba(255, 255, 255, 0.5);
+
+  .tab-glass-fill {
+    background: var(--open-panel-tab-bg);
+    border-radius: inherit;
+    box-shadow: var(--open-panel-glass-shadow);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :where(.open-panel[data-theme="system"]) {
+    --open-panel-glass-tint: transparent;
+    --open-panel-tab-bg: rgba(255, 255, 255, 0.1);
+    --open-panel-glass-edge: none;
+    --open-panel-glass-reflection-opacity: 0.5;
+    --open-panel-glass-shadow: 0 0 0 1px rgba(0, 0, 0, 0.13);
+  }
+
+  .tab-glass-fill {
+    background: var(--open-panel-tab-bg);
+    border-radius: inherit;
+    box-shadow: var(--open-panel-glass-shadow);
+  }
+}
+
+/* Keep the light reflection above the glass renderer rather than beneath it. */
+:where(
+  .open-panel [data-open-panel-part="tab"][data-selected] [data-open-panel-part="tab-background"]
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* WebKit's prefixed backdrop support selects a CSS frosted material. Also keep
+   a visible tint and rim when backdrop filtering is unavailable altogether. */
+@supports (-webkit-backdrop-filter: blur(1px)) or (not (backdrop-filter: blur(1px))) {
+  [data-open-panel-glass-selected="true"] {
+    --open-panel-frost-tint: oklch(0.24 0.01 260 / 55%);
+    --open-panel-frost-rim: oklch(1 0 none / 22%);
+    /* Override the renderer's imperative inline filter, avoiding SVG URLs. */
+    -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+    backdrop-filter: blur(12px) saturate(140%) !important;
+  }
+
+  [data-open-panel-glass-selected="true"]:is(
+    [data-open-panel-glass-theme="light"],
+    [data-open-panel-glass-theme="system"]
+  ) {
+    --open-panel-frost-tint: oklch(0.97 0.005 260 / 60%);
+    --open-panel-frost-rim: oklch(1 0 none / 70%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    [data-open-panel-glass-selected="true"][data-open-panel-glass-theme="system"] {
+      --open-panel-frost-tint: oklch(0.24 0.01 260 / 55%);
+      --open-panel-frost-rim: oklch(1 0 none / 22%);
+    }
+  }
+
+  [data-open-panel-glass-selected="true"] > .tab-glass-fill {
+    border-radius: inherit;
+    background:
+      linear-gradient(135deg, oklch(1 0 none / 11%), oklch(1 0 none / 0%)), var(--open-panel-frost-tint);
+    box-shadow:
+      inset 0 1px 0 var(--open-panel-frost-rim),
+      inset 0 0 0 1px oklch(1 0 none / 12%),
+      0 2px 5px oklch(0 0 none / 12%);
+  }
+}
