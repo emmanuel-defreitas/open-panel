@@ -4,12 +4,13 @@ import type { Theme } from "open-panel-core";
 import { useView } from "./Workspace";
 export type GlassTabBackgroundProps = Omit<ComponentProps<typeof Glass>, "children"> & { theme?: Theme };
 // The icon slot keeps the decorative background attached to its tab.
-export function GlassTabBackground({ theme = "dark", ...props }: GlassTabBackgroundProps) {
+export function GlassTabBackground({ theme = "dark", style, ...props }: GlassTabBackgroundProps) {
   const { selected } = useView();
+  if (!selected) return null;
+
   return (
     <Glass
       aria-hidden="true"
-      // muted
       radius={10}
       optics={{
         depth: 0.5,
@@ -22,11 +23,12 @@ export function GlassTabBackground({ theme = "dark", ...props }: GlassTabBackgro
         sheenAngle: 0.2,
         softEdge: true,
         bendWidth: 0.3,
-        specular: 0.7,
+        specular: 0.55,
       }}
-
-      style={{ width: "100%", height: "100%" }}
       {...props}
+      data-open-panel-glass-theme={theme}
+      data-open-panel-glass-selected={selected ? "true" : "false"}
+      style={{ inlineSize: "100%", blockSize: "100%", ...style }}
     >
       {/* A child enables the package's backdrop material mode. */}
       <span className="tab-glass-fill" />

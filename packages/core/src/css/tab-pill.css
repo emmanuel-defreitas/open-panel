@@ -1,25 +1,27 @@
-/* Quiet inactive pills remain legible over both plain panels and scrolled imagery. */
+/* Inactive tabs use a solid, quiet surface rather than a glass material. */
+:where(.open-panel) {
+  /* Cartesian interpolation avoids hue shifts when mixing near-neutral colors. */
+  --open-panel-tab-inactive-bg: color-mix(in oklab, var(--open-panel-panel) 96%, oklch(1 0 none));
+}
+
 :where(.open-panel [data-open-panel-part="tab"]:not([data-selected])) {
-  --open-panel-tab-bg: white;
   border-radius: 10px;
-  background: transparent;
+  background: var(--open-panel-tab-inactive-bg);
   box-shadow: none;
+}
 
-  .tab-glass-fill {
-    border-radius: inherit;
-    background: var(--open-panel-tab-bg);
+:where(
+  .open-panel [data-open-panel-part="tab"]:not([data-selected]) [data-open-panel-part="tab-background"]
+) {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.open-panel [data-open-panel-part="tab"]:not([data-selected]):hover) {
+    background: color-mix(in oklab, var(--open-panel-tab-inactive-bg) 95%, currentColor);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :where(.open-panel [data-open-panel-part="tab"]:not([data-selected]) .tab-glass-fill) {
-    --open-panel-tab-bg: rgba(0, 0, 0, 0.9);
-    box-shadow: none;
-    border-radius: 10px;
-    background: red;
-  }
-}
-
-:where(.open-panel [data-open-panel-part="tab"]:not([data-selected]):hover) {
-  background: color-mix(in srgb, var(--open-panel-tab-active) 5%, transparent);
+:where(.open-panel [data-open-panel-part="tab"]:not([data-selected]):active) {
+  background: color-mix(in oklab, var(--open-panel-tab-inactive-bg) 90%, currentColor);
 }
