@@ -1,0 +1,28 @@
+@media (prefers-reduced-motion: reduce) {
+  :where(.open-panel [data-appearing], .open-panel .open-panel-menu) {
+    animation: none;
+  }
+  :where(.open-panel [data-open-panel-part="drop-slot"]) {
+    transition: none;
+  }
+}
+
+/* Windows high contrast and other forced-color modes: box-shadows vanish, so draw real borders. */
+@media (forced-colors: active) {
+  :where(.open-panel [data-open-panel-part="panel"]) {
+    border: 1px solid CanvasText;
+  }
+  :where(.open-panel [data-open-panel-part="tab"][data-selected]) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+  :where(.open-panel [data-open-panel-part="drop-slot"][data-visible]) {
+    border: 2px solid Highlight;
+  }
+  :where(.open-panel [data-open-panel-part="divider"])::after {
+    background: Highlight;
+  }
+  :where(.open-panel .open-panel-menu) {
+    border: 1px solid CanvasText;
+  }
+}

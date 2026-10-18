@@ -1,0 +1,37 @@
+/* ------------------------------------------------------------------ drag slots */
+/* While dragging, the layout itself reflows to open a slot where the view will land. */
+:where(.open-panel [data-open-panel-part="drop-slot"], .open-panel [data-open-panel-part="source-slot"]) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  pointer-events: none;
+  border-radius: var(--open-panel-radius);
+}
+:where(.open-panel [data-open-panel-part="source-slot"][data-visible]) {
+  display: block;
+  z-index: 5;
+  background: transparent;
+}
+:where(.open-panel [data-open-panel-part="drop-slot"]) {
+  display: grid;
+  place-items: center;
+  z-index: 3000;
+  background: var(--open-panel-slot);
+  opacity: 0;
+  transition: opacity 140ms ease-out;
+}
+:where(.open-panel [data-open-panel-part="drop-slot"][data-visible]) {
+  opacity: 1;
+}
+:where(.open-panel [data-open-panel-part="drop-slot"][data-kind="tab"]) {
+  background: color-mix(in srgb, var(--open-panel-slot) 70%, transparent);
+  box-shadow: inset 0 0 0 2px var(--open-panel-accent);
+}
+:where(.open-panel [data-open-panel-part="drop-label"]) {
+  color: var(--open-panel-text-muted);
+  font-weight: 550;
+}
+:where(.open-panel[data-dragging] [data-open-panel-part="content"]) {
+  pointer-events: none;
+}

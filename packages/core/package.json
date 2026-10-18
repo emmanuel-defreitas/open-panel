@@ -42,7 +42,7 @@
         "README.md"
     ],
     "scripts": {
-        "build": "tsup && cp src/style.css dist/style.css",
+        "build": "tsup && node scripts/build-css.mjs dist/style.css",
         "typecheck": "tsc --noEmit",
         "prepack": "bun run build"
     },

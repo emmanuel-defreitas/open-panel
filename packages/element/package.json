@@ -42,7 +42,7 @@
     "open-panel-core": "^0.1.0"
   },
   "scripts": {
-    "build": "tsup && cp ../core/src/style.css dist/style.css",
+    "build": "tsup && node ../core/scripts/build-css.mjs dist/style.css",
     "typecheck": "tsc --noEmit",
     "prepack": "bun run build"
   },
