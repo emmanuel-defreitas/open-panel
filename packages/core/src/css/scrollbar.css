@@ -1,0 +1,46 @@
+/* Native scrollbars: quiet theme-aware thumbs, with no contrasting track. */
+:where(.open-panel) {
+  --open-panel-scrollbar-thumb: color-mix(in srgb, var(--open-panel-text-muted) 28%, transparent);
+  --open-panel-scrollbar-thumb-hover: color-mix(in srgb, var(--open-panel-text-muted) 48%, transparent);
+}
+:where(.open-panel[data-theme="light"]) {
+  color-scheme: light;
+}
+:where(.open-panel:is([data-theme="dark"], [data-theme="darker"], [data-theme="medium"])) {
+  color-scheme: dark;
+}
+:where(.open-panel[data-theme="system"]) {
+  color-scheme: light dark;
+}
+:where(.open-panel [data-open-panel-part="content"]) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--open-panel-scrollbar-thumb) transparent;
+}
+:where(.open-panel [data-open-panel-part="content"]:is(:hover, :focus-within)) {
+  scrollbar-color: var(--open-panel-scrollbar-thumb-hover) transparent;
+}
+/* Fallback for engines that do not implement the standard scrollbar properties. */
+@supports not (scrollbar-color: auto) {
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar-track,
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar-thumb {
+    background: var(--open-panel-scrollbar-thumb);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+  }
+  :where(.open-panel [data-open-panel-part="content"])::-webkit-scrollbar-thumb:hover {
+    background-color: var(--open-panel-scrollbar-thumb-hover);
+  }
+}
+@media (forced-colors: active) {
+  :where(.open-panel [data-open-panel-part="content"]) {
+    scrollbar-color: auto;
+  }
+}

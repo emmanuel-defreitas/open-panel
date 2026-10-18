@@ -1,0 +1,79 @@
+/* ------------------------------------------------------------------ menu */
+:where(.open-panel .open-panel-menu) {
+  position: absolute;
+  z-index: 5000;
+  min-width: 190px;
+  max-width: 320px;
+  padding: 5px;
+  border-radius: 10px;
+  background: var(--open-panel-menu);
+  color: var(--open-panel-text);
+  box-shadow:
+    0 0 0 1px var(--open-panel-border),
+    0 12px 32px -6px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  outline: none;
+  animation: open-panel-menu 120ms var(--open-panel-ease);
+}
+@keyframes open-panel-menu {
+  from {
+    opacity: 0;
+    translate: 0 -3px;
+  }
+}
+:where(.open-panel .open-panel-menu-item) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 28px;
+  padding: 0 8px 0 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+  outline: none;
+}
+:where(
+  .open-panel .open-panel-menu-item:hover,
+  .open-panel .open-panel-menu-item:focus-visible,
+  .open-panel .open-panel-menu-item:focus
+) {
+  background: var(--open-panel-menu-hover);
+}
+:where(.open-panel .open-panel-menu-item[aria-disabled="true"]) {
+  opacity: 0.4;
+}
+:where(.open-panel .open-panel-menu-item.open-panel-danger) {
+  color: #e5484d;
+}
+:where(.open-panel .open-panel-menu-check, .open-panel .open-panel-menu-chevron) {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+:where(.open-panel .open-panel-menu-check svg, .open-panel .open-panel-menu-chevron svg) {
+  width: 14px;
+  height: 14px;
+}
+:where(.open-panel .open-panel-menu-label) {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:where(.open-panel .open-panel-menu-shortcut) {
+  color: var(--open-panel-text-muted);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+}
+:where(.open-panel .open-panel-menu-separator) {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--open-panel-border);
+}
