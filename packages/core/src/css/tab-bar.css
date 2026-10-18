@@ -231,16 +231,13 @@
   align-self: center;
   margin-left: 2px;
 }
-:where(.open-panel [data-open-panel-part="accessories"]) {
+:where(.open-panel :is([data-open-panel-part="accessories"], [data-open-panel-part="accessory"])) {
   display: flex;
   align-items: center;
-  flex: none;
   gap: 4px;
 }
-:where(.open-panel [data-open-panel-part="accessory"]) {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+:where(.open-panel [data-open-panel-part="accessories"]) {
+  flex: none;
 }
 :where(.open-panel [data-open-panel-part="accessory"]:empty) {
   display: none;
@@ -251,10 +248,16 @@
 :where(.open-panel [data-open-panel-part="panel"][data-tabbar="hidden"] [data-open-panel-part="tabbar"]) {
   display: none;
 }
-:where(.open-panel [data-open-panel-part="panel"][data-compact] [data-open-panel-part="tab-title"]),
-:where(.open-panel [data-open-panel-part="panel"][data-compact] [data-open-panel-part="tab-close"]),
-:where(.open-panel [data-open-panel-part="panel"][data-compact] [data-open-panel-part="accessories"]),
-:where(.open-panel [data-open-panel-part="panel"][data-compact] [data-open-panel-part="tab-badge"]) {
+:where(
+  .open-panel
+    [data-open-panel-part="panel"][data-compact]
+    :is(
+      [data-open-panel-part="tab-title"],
+      [data-open-panel-part="tab-close"],
+      [data-open-panel-part="accessories"],
+      [data-open-panel-part="tab-badge"]
+    )
+) {
   display: none;
 }
 

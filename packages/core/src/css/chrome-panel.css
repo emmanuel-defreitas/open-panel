@@ -147,6 +147,7 @@
   bottom: 8px;
 }
 
+/* Intrinsic measurement includes tabs hidden by the compact presentation. */
 :where(.open-panel [data-measuring-tabs] [data-open-panel-part="tab"]) {
   display: flex !important;
   flex: none !important;
