@@ -1,6 +1,7 @@
 {
   "name": "open-panel-element",
   "version": "0.1.0",
+  "license": "MIT",
   "description": "<open-panel-workspace>: Open-Panel as a custom element for any framework or none.",
   "type": "module",
   "author": "Emmanuel De Freitas",

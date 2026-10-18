@@ -1,6 +1,7 @@
 {
   "name": "open-panel-react",
   "version": "0.1.0",
+  "license": "MIT",
   "description": "React bindings for Open-Panel: dockable, zoomable workspaces for web tools.",
   "type": "module",
   "author": "Emmanuel De Freitas",
