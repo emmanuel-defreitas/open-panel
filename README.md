@@ -10,7 +10,15 @@ Dockable panels, adaptive tabs, floating windows, and independent scrolling — 
 
 </div>
 
-![Open Panel playground: dark panels, glass tabs, and independently scrolling articles](docs/assets/banner.png)
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="docs/assets/demo-static.png">
+  <source type="image/gif" srcset="docs/assets/demo.gif">
+  <img src="docs/assets/demo-static.png" width="800" height="500" alt="Open Panel demo: maximize a panel, scroll beneath its header, float and dock a view, and switch themes.">
+</picture>
+
+The demo shows panel focus, independent scrolling, floating, docking, and theme switching. [View the GIF](docs/assets/demo.gif) · [Static preview](docs/assets/demo-static.png) · [Color customization guide](docs/customization.md)
+
+Run `bun install` and `bun run dev` from this checkout to open the docs and interactive playground. The docs include a live color editor with copyable CSS and React props.
 
 ## What you get
 
@@ -145,7 +153,7 @@ import { GlassTabBackground } from "open-panel-react/glass";
 </ViewType>;
 ```
 
-Pass the same theme to `Workspace` and `GlassTabBackground`. The material starts with the playground's current optics; its `optics`, `radius`, and other Glass props can be overridden. Glass is hidden in the tiny panel/frame presentation. `PanelTabsMenu` remains available in compact mode and lists every tab in its panel.
+Pass the same theme to `Workspace` and `GlassTabBackground`. The material starts with the playground's current optics; its `optics`, `radius`, and other Glass props can be overridden. Glass is hidden in the tiny panel/frame presentation. `PanelTabsMenu` appears only when tabs are clipped or hidden by compact mode. Its count and options include those tabs only.
 
 `headerAction` also accepts `(view) => ReactNode`, for example:
 
@@ -331,6 +339,8 @@ Set `.options = { scrollFade: { size: 56 } }` for richer options. The `.workspac
 
 ## Theme and CSS customization
 
+See the [customization guide](docs/customization.md) for color variables, CSS selectors, and the live theme editor.
+
 ```tsx
 <Workspace
   theme="light"
@@ -374,3 +384,7 @@ Content scrollbars use transparent tracks and subtle theme-aware thumbs. Overrid
 `--open-panel-scrollbar-thumb` and `--open-panel-scrollbar-thumb-hover` through CSS
 or `Workspace.tokens`. The native scrollbar keeps platform scrolling behavior and
 uses system colors in forced-color mode.
+
+## License
+
+[MIT](LICENSE).
