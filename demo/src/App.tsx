@@ -56,6 +56,9 @@ function Demo() {
           </span>
           <strong>Open Panel</strong>
           <span className="subtitle">Layout playground</span>
+          <a className="demo-docs-link" href="#docs">
+            Docs ↗
+          </a>
         </div>
         <div className="controls" aria-label="Layout controls">
           <select

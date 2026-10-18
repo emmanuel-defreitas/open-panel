@@ -1,6 +1,7 @@
 {
     "name": "open-panel-core",
     "version": "0.1.0",
+    "license": "MIT",
     "description": "Dockable, zoomable workspaces for web tools. Framework-agnostic core.",
     "type": "module",
     "author": "Emmanuel De Freitas",
