@@ -28,7 +28,7 @@ export type {
   FloatingProps,
   ViewApi,
 } from "./Workspace";
-export { layout, createDocument, formatCombo } from "open-panel-core";
+export { layout, createDocument, formatCombo, attachScrollFade } from "open-panel-core";
 export type * from "open-panel-core";
 
 export { useViewState, usePanelViews, useFocusedView, useWorkspaceActions, useWorkspaceEvent } from "./hooks";

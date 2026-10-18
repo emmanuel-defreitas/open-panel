@@ -1,59 +1,57 @@
 {
-    "name": "open-panel-core",
-    "version": "0.1.0",
-    "license": "MIT",
-    "description": "Dockable, zoomable workspaces for web tools. Framework-agnostic core.",
-    "type": "module",
-    "author": "Emmanuel De Freitas",
-    "homepage": "https://github.com/emmanuel-defreitas/open-panel",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/emmanuel-defreitas/open-panel.git",
-        "directory": "packages/core"
+  "name": "open-panel-core",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Dockable, zoomable workspaces for web tools. Framework-agnostic core.",
+  "type": "module",
+  "author": "Emmanuel De Freitas",
+  "homepage": "https://github.com/emmanuel-defreitas/open-panel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emmanuel-defreitas/open-panel.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "docking",
+    "layout",
+    "tabs",
+    "panels",
+    "workspace",
+    "window-manager",
+    "split-view"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
-    "keywords": [
-        "docking",
-        "layout",
-        "tabs",
-        "panels",
-        "workspace",
-        "window-manager",
-        "split-view"
-    ],
-    "sideEffects": [
-        "*.css"
-    ],
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "source": "./src/index.ts",
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
-        },
-        "./style.css": {
-            "source": "./src/style.css",
-            "default": "./dist/style.css"
-        },
-        "./package.json": "./package.json"
+    "./style.css": {
+      "source": "./src/style.css",
+      "default": "./dist/style.css"
     },
-    "files": [
-        "dist",
-        "README.md"
-    ],
-    "scripts": {
-        "build": "tsup && node scripts/build-css.mjs dist/style.css",
-        "typecheck": "tsc --noEmit",
-        "prepack": "bun run build"
-    },
-    "devDependencies": {
-        "@types/node": "catalog:",
-        "tsup": "catalog:",
-        "typescript": "catalog:",
-        "vitest": "catalog:"
-    },
-    "publishConfig": {
-        "access": "public"
-    }
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup && node scripts/build-css.mjs dist/style.css",
+    "typecheck": "tsc --noEmit",
+    "prepack": "bun run build"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "private": true
 }

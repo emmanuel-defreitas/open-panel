@@ -52,7 +52,5 @@
     "tsup": "catalog:",
     "typescript": "catalog:"
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "private": true
 }

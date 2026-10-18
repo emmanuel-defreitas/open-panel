@@ -1,18 +1,18 @@
 # open-panel-react
 
-React components and hooks for Open-Panel. Requires React 18.3+ and `open-panel-core`.
+React components and hooks for Open-Panel. Requires React and React DOM 18.3+. The layout engine and stylesheet are included.
 
-Install it with the core package:
+Install the package:
 
 ```sh
-bun install open-panel-react open-panel-core
+bun add open-panel-react
 ```
 
 Declare view types and an initial layout:
 
 ```tsx
 import { Workspace, ViewType, Split, Stage, View } from "open-panel-react";
-import "open-panel-core/style.css";
+import "open-panel-react/style.css";
 
 <Workspace theme="dark">
   <ViewType id="notes" title="Notes">

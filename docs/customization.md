@@ -23,7 +23,7 @@ Start the docs with `bun run dev`, then open **Customize**. Change a color in th
 
 ## Use a stylesheet
 
-Import `open-panel-core/style.css` before your overrides. In React, `className` belongs to the host element; target its `.open-panel` child for theme variables.
+Import `open-panel-react/style.css` before your overrides. In React, `className` belongs to the host element; target its `.open-panel` child for theme variables.
 
 ```tsx
 <Workspace className="my-workspace" theme="dark">
