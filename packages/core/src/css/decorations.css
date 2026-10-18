@@ -56,24 +56,10 @@
   z-index: 1;
 }
 
-:where(.open-panel [data-open-panel-part="tabs"][data-measuring-tabs] [data-open-panel-part="tab"]) {
-  flex: none;
-  width: max-content;
-  max-width: none;
-}
-
 :where(.open-panel [data-open-panel-part="tab"][data-full-width]) {
   flex: 1 0 auto;
   max-width: none;
 }
-/* Intrinsic measurement includes tabs hidden by the compact presentation. */
-:where(.open-panel [data-open-panel-part="tabs"][data-measuring-tabs] [data-open-panel-part="tab"]) {
-  display: flex !important;
-  flex: none !important;
-  width: max-content !important;
-  max-width: none !important;
-}
-
 /* Workspace overlay headers keep all tabs visible and retain their drag targets. */
 :where(
   .open-panel[data-header-mode="overlay"]

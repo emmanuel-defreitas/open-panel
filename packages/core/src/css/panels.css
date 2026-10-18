@@ -13,11 +13,6 @@
     0 0 0 1px var(--open-panel-border),
     var(--open-panel-shadow-float);
 }
-:where(.open-panel[data-dragging] [data-open-panel-part="panel"][data-floating]) {
-  box-shadow:
-    0 0 0 1px var(--open-panel-border),
-    var(--open-panel-shadow-float);
-}
 :where(.open-panel [data-open-panel-part="panel"][data-lifted]) {
   box-shadow:
     0 0 0 1px var(--open-panel-border),

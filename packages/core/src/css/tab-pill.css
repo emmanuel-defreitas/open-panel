@@ -15,8 +15,6 @@
   :where(.open-panel [data-open-panel-part="tab"]:not([data-selected]) .tab-glass-fill) {
     --open-panel-tab-bg: rgba(0, 0, 0, 0.9);
     box-shadow: none;
-    background: transparent;
-
     border-radius: 10px;
     background: red;
   }

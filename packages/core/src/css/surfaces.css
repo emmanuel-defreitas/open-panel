@@ -45,9 +45,6 @@
 
 /* Without a bar above it, a surface rounds all four corners. (After the base surface rule:
  * both have zero specificity, so order decides.) */
-:where(.open-panel [data-open-panel-part="surface"][data-tabbar="overlay"]) {
-  border-radius: var(--open-panel-radius);
-}
-:where(.open-panel [data-open-panel-part="surface"][data-tabbar="hidden"]) {
+:where(.open-panel [data-open-panel-part="surface"]:is([data-tabbar="overlay"], [data-tabbar="hidden"])) {
   border-radius: var(--open-panel-radius);
 }
