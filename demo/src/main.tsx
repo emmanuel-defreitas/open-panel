@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "open-panel-core/style.css";
+import "open-panel-react/style.css";
 import "./styles.css";
 import { Site } from "./Site";
 

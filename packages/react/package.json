@@ -1,8 +1,8 @@
 {
   "name": "open-panel-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
-  "description": "React bindings for Open-Panel: dockable, zoomable workspaces for web tools.",
+  "description": "Dockable React workspaces with a bundled layout engine and stylesheet.",
   "type": "module",
   "author": "Emmanuel De Freitas",
   "homepage": "https://github.com/emmanuel-defreitas/open-panel",
@@ -19,7 +19,9 @@
     "panels",
     "workspace"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -39,6 +41,10 @@
       "source": "./src/sounds.ts",
       "types": "./dist/sounds.d.ts",
       "import": "./dist/sounds.js"
+    },
+    "./style.css": {
+      "source": "./src/style.css",
+      "default": "./dist/style.css"
     }
   },
   "files": [
@@ -46,14 +52,13 @@
     "README.md"
   ],
   "peerDependencies": {
-    "open-panel-core": "^0.1.0",
     "react": ">=18.3",
     "react-dom": ">=18.3",
     "@samasante/liquid-glass": "^0.1.1",
     "cuelume": "^0.2.8"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "bun run --cwd ../core build && tsup && node ../core/scripts/build-css.mjs dist/style.css",
     "typecheck": "tsc --noEmit",
     "prepack": "bun run build"
   },

@@ -239,8 +239,8 @@ export function Docs() {
           <div>
             <h2>Install & setup</h2>
             <p>
-              Inside an existing React 18.3+ app with a bundler, install the core and React packages. Import
-              the CSS once and give the workspace a height.
+              Inside an existing React 18.3+ app with a bundler, install the React package. Import the CSS
+              once and give the workspace a height.
             </p>
             <p>
               Working from source? Run <code>bun install</code>, then <code>bun run dev</code>. This demo
@@ -248,9 +248,9 @@ export function Docs() {
             </p>
           </div>
           <div>
-            <Code label="Install">{"npm install open-panel-core open-panel-react"}</Code>
+            <Code label="Install">{"npm install open-panel-react"}</Code>
             <Code label="App.tsx">{`import { Workspace, ViewType, Split, View } from "open-panel-react";
-import "open-panel-core/style.css";
+import "open-panel-react/style.css";
 
 export default function App() {
   return (

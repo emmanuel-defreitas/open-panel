@@ -34,32 +34,21 @@ The screenshots come from the included playground. Its article text, photographs
 
 ## Install
 
-Choose the adapter you need. A bundler supporting ES modules and CSS imports is recommended.
+Install the React package in an existing React 18.3+ application:
 
 ```sh
-# React 18.3+ (in an existing React application)
-pnpm add open-panel-core open-panel-react
-
-# Plain TypeScript / JavaScript
-pnpm add open-panel-core
-
-# Custom elements, including non-React applications
-pnpm add open-panel-core open-panel-element
+npm install open-panel-react
 ```
 
-Use `npm install` or `bun add` in place of `pnpm add` if preferred. Import the stylesheet once, and give the workspace a real height. In this checkout, `bun install` links the local workspace packages; the playground does not need a registry release.
+The package includes the layout engine, TypeScript declarations, and CSS. React and React DOM are peer dependencies. Import `open-panel-react/style.css` once and give the workspace a height.
 
-| Package                                  | Responsibility                                                               |
-| ---------------------------------------- | ---------------------------------------------------------------------------- |
-| [`open-panel-core`](packages/core)       | Layout engine, DOM runtime, shared styling, persistence, scroll fades        |
-| [`open-panel-react`](packages/react)     | Declarative layout, portals, replaceable slots, hooks, optional integrations |
-| [`open-panel-element`](packages/element) | Light-DOM `<open-panel-workspace>` and template-based views                  |
+`open-panel-core` and `open-panel-element` are internal workspace packages available from this repository; they are not separate npm releases. See the [React reference](packages/react/README.md) for the published API.
 
 ## React quick start
 
 ```tsx
 import { Workspace, ViewType, Split, Panel, View, PanelTabsMenu } from "open-panel-react";
-import "open-panel-core/style.css";
+import "open-panel-react/style.css";
 import "./workspace.css";
 
 export default function App() {
@@ -183,7 +172,7 @@ Fades apply only to the content scroller, never to header controls. The top edge
 For a custom scrolling element, core also exports a lifecycle helper:
 
 ```ts
-import { attachScrollFade } from "open-panel-core";
+import { attachScrollFade } from "open-panel-react";
 const cleanup = attachScrollFade(myScrollElement, { size: 40 });
 // Call when unmounting the custom scroller:
 cleanup();
@@ -272,7 +261,9 @@ function SoundToggle() {
 
 Place this component inside your `WorkspaceProvider`. Cuelume unlocks audio through user interaction. Selection, opening, closing, and drag pickup/drop get quiet cues; hover and continuous movement stay silent. Persistence is opt-in through `storageKey`. Cuelume's volume and enabled state are shared globally: mount one sound controller per application. The core React entry does not import either optional integration.
 
-## Plain TypeScript
+## Plain TypeScript (source checkout)
+
+The core is an internal workspace package. The example below runs from a checkout, not a separate npm install.
 
 ```ts
 import { createWorkspace, layout as L } from "open-panel-core";
@@ -305,7 +296,9 @@ ws.open("notes", { focus: true });
 // ws.destroy();
 ```
 
-## Custom elements
+## Custom elements (source checkout)
+
+The element adapter is maintained in this repository and is not published separately to npm.
 
 With a bundler, register the element and import its CSS in your entry module:
 
